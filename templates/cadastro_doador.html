@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% block title %} index {% endblock %}
+{% block content %}
+
+<h1>oi</h1>
+
+    <form action="{{url_for('cadastro_doador')}}" method="post">
+        <input type="text" name="nome" placeholder="Nome">
+        <input type="email" name="email" placeholder="Email">
+        <input type="tel" name="telefone" placeholder="Telefone">
+    </form>
+
+{% endblock %}
