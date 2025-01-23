@@ -8,9 +8,19 @@
 </head>
 <body>
 
-    <header>
-        <h1>PROJETO</h1>
-    </header>
+
+        <header>
+            <h1>Sistema de Gerenciamento de Doações</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Início</a></li>
+                    <li><a href="{{ url_for('doador') }}">Doadores</a></li>
+                    <li><a href="{{ url_for('campanhas') }}">Campanhas</a></li>
+                    <li><a href="{{ url_for('doador') }}">Adicionar Doador</a></li>
+                    <li><a href="{{ url_for('campanhas') }}">Adicionar Campanha</a></li>
+                </ul>
+            </nav>
+        </header>
 
     <div class="container">
         {% block content %}

@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block title %}Doadores{% endblock %}
+
+{% block content %}
+<h2>Lista de Doadores</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for doador in doadores %}
+        <tr>
+            <td>{{ doador['id'] }}</td>
+            <td>{{ doador['nome'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

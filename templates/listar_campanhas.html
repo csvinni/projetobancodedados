@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block title %}Campanhas{% endblock %}
+
+{% block content %}
+<h2>Lista de Campanhas</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Descrição</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for campanha in campanhas %}
+            <tr>
+                <td>{{ campanha['id'] }}</td>
+                <td>{{ campanha['titulo'] }}</td>
+                <td>{{ campanha['descricao'] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

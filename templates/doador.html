@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+{% block title %} index {% endblock %}
+{% block content %}
+
+<div class="doador">
+    <form action="{{ url_for('doador') }}" method="post">
+        <label for="nome">Nome</label>
+        <input type="text" name="nome" id="nome" placeholder="Nome">
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" placeholder="Email">
+
+        <label for="telefone">Telefone</label>
+        <input type="tel" name="telefone" id="telefone" placeholder="Telefone">
+
+        <button type="submit">Enviar</button>
+</div>
+
+{% endblock %}
