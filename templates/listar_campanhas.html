@@ -11,9 +11,9 @@
         <div class="blocos_de_campahas">
             {% if campanhas %}
                 {% for campanha in campanhas %}
-                
+
                     <div class="bloquinho_campanha">
-                        <form action="{{url_for('doador')}}" method="post">
+
                             <div class="info-campanha">
                                 <h3 id="titulo-c">{{ campanha['titulo'] }}</h3>
                                 <h4> Descrição: {{ campanha['descricao'] }}</h4>
@@ -21,14 +21,14 @@
                                 <h4>Meta itens: {{ campanha['meta_itens'] }}</h4>
                                 <h4 class="datas">Data Inicial: {{ campanha['data_inicio'] }}</h4>
                                 <h4 class="datas">Data Limite: {{ campanha['data_fim'] }}</h4>
-                                <button class="butao" type="submit">Quero doar</button>
+                                <form action="{{url_for('doador')}}" method="post">
+                                    <button class="butao" type="submit">Quero doar</button>
+                                </form>
 
                             </div>
-                        </form>
+
                         <div class="div-campanha">
-                            <form action="{{ url_for('editar', id=campanha['id']) }}" method="post">
-                                <button type="submit">editar</button>
-                            </form>
+                            <a href="{{ url_for('editar', id=campanha['id']) }}">editar</a> 
                             <form action="{{ url_for('concluida', id=campanha['id']) }}" method="post" class="form-campanha">
                                 <button type="submit">Concluir</button>
                             </form>

@@ -77,19 +77,6 @@ def listar_campanhas():
     cursor = conexao.connection.cursor()
     campanhas = []
 
-    if request.method == 'POST':
-        cursor = conexao.connection.commit() 
-        titulo = request.form.get('titulo')
-        descricao = request.form.get('descricao')
-        meta_financeira = request.form.get('meta_financeira')
-        meta_itens = request.form.get('meta_itens')
-        data_inicio = request.form.get('data_inicio')
-        data_fim = request.form.get('data_fim')
-
-        cursor.execute(
-            "INSERT INTO campanhas (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim) VALUES (%s, %s, %s, %s, %s, %s)",
-            (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim)
-        )
     cursor.execute("SELECT * FROM campanhas")
     campanhas = cursor.fetchall() 
 
