@@ -2,12 +2,28 @@
 {% block title %} index {% endblock %}
 {% block content %}
 
-<h1>oi</h1>
+    <div class="area-cadastro" >
+        <h2>Faça uma boa ação e muda a vida do próximo</h2>
+        <form class="formulario" action="{{url_for('cadastro_doador')}}" method="post">
 
-    <form action="{{url_for('cadastro_doador')}}" method="post">
-        <input type="text" name="nome" placeholder="Nome">
-        <input type="email" name="email" placeholder="Email">
-        <input type="tel" name="telefone" placeholder="Telefone">
-    </form>
+            <div class="info-form">
+                <label for="name">Nome:</label>
+                <input type="text" name="nome" placeholder="Nome">
+            </div>
 
+            <div class="info-form">
+                <label for="e-mail">E-mail:</label>
+                <input type="email" name="email" placeholder="Email">
+            </div>
+
+            <div class="info-form">
+                <label for="telefone">Contato:</label>
+                <input type="tel" name="telefone" placeholder="Telefone">
+            </div>
+
+            <button type="submit" class="but-doar">DOAR</button>
+
+            <!-- APÓS O TELEFONE DEVE-SE MOSTRAR OS HISTÓRICO DE DOAÇÕES DO DOADOR IDENTIFICADO -->
+        </form>
+    </div>
 {% endblock %}

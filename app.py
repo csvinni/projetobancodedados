@@ -63,9 +63,9 @@ def campanhas():
         finally:
             cursor.close()
 
-        return render_template('campanhas.html')
+        return render_template('cadastro_campanhas.html')
     
-    return  render_template('campanhas.html')
+    return  render_template('cadastro_campanhas.html')
 
 @app.route('/itens_doacoes',  methods = (['GET', 'POST']))
 def itens_doacoes():
