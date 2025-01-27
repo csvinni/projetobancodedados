@@ -1,3 +1,4 @@
+
 CREATE DATABASE IF NOT EXISTS `db_banco`;
 USE `db_banco`;
 
@@ -15,7 +16,9 @@ CREATE TABLE campanhas (
     meta_financeira TEXT NOT NULL, 
     meta_itens TEXT NOT NULL, 
     data_inicio DATE,
+    status TEXT NOT NULL,
     data_fim DATE
+    
 );
 
 CREATE TABLE itens (

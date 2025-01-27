@@ -42,7 +42,7 @@ def doador():
 
     return render_template('doador.html')
 
-@app.route('/campanhas',  methods = (['GET', 'POST']))
+@app.route('/campanhas', methods=['GET', 'POST'])
 def campanhas():
     if request.method == 'POST':
         cursor = conexao.connection.cursor()
@@ -52,6 +52,7 @@ def campanhas():
         meta_itens = request.form.get('meta_itens')
         data_inicio = request.form.get('data_inicio')
         data_fim = request.form.get('data_fim')
+
         INSERT = 'INSERT INTO campanhas(titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim) VALUES (%s, %s, %s, %s, %s, %s)'
         
         try:
@@ -62,24 +63,39 @@ def campanhas():
             conexao.connection.rollback()  
         finally:
             cursor.close()
-
         return render_template('cadastro_campanhas.html')
+    return render_template('cadastro_campanhas.html')
     
-    return  render_template('cadastro_campanhas.html')
+
 
 @app.route('/itens_doacoes',  methods = (['GET', 'POST']))
 def itens_doacoes():
     return  render_template('itens_doacoes.html')
 
-@app.route('/listar_campanhas',  methods = (['GET', 'POST']))
+@app.route('/listar_campanhas', methods=['GET', 'POST'])
 def listar_campanhas():
+    cursor = conexao.connection.cursor()
+    campanhas = []
 
-    cursor = conexao.connection.cursor()  
-    cursor.execute("SELECT * FROM campanhas") 
+    if request.method == 'POST':
+        cursor = conexao.connection.commit() 
+        titulo = request.form.get('titulo')
+        descricao = request.form.get('descricao')
+        meta_financeira = request.form.get('meta_financeira')
+        meta_itens = request.form.get('meta_itens')
+        data_inicio = request.form.get('data_inicio')
+        data_fim = request.form.get('data_fim')
+
+        cursor.execute(
+            "INSERT INTO campanhas (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim) VALUES (%s, %s, %s, %s, %s, %s)",
+            (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim)
+        )
+    cursor.execute("SELECT * FROM campanhas")
     campanhas = cursor.fetchall() 
-    cursor.close()
 
-    return  render_template('listar_campanhas.html', campanhas=campanhas)
+    cursor.close()
+    return render_template('listar_campanhas.html', campanhas=campanhas)
+
 
 
 @app.route('/listar_doadores',  methods = (['GET', 'POST']))
@@ -90,6 +106,42 @@ def listar_doadores():
     cursor.close()
     return  render_template('listar_doadores.html', doadores=doadores)
 
+
+
 @app.route('/relatorios',  methods = (['GET', 'POST']))
 def relatorios():
     return  render_template('relatorios.html')
+
+
+@app.route('/concluida/<int:id>', methods=['POST'])
+def concluida(id):
+    cursor = conexao.connection.cursor()
+    cursor.execute("UPDATE campanhas SET status = 'Concluída' WHERE id = %s", (id,))
+    conexao.connection.commit()
+    cursor.close()
+    return redirect(url_for('listar_campanhas'))
+
+
+
+@app.route('/editar/<int:id>', methods=['POST', 'GET'])
+def editar(id):
+    cursor = conexao.connection.cursor()
+    cursor.execute('SELECT id, titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim FROM campanhas WHERE id = %s', (id,))
+    campanha = cursor.fetchone()
+    
+    if request.method == 'POST':
+        titulo = request.form.get('titulo')
+        descricao = request.form.get('descricao')
+        meta_financeira = request.form.get('meta_financeira')
+        meta_itens = request.form.get('meta_itens')
+        data_inicio = request.form.get('data_inicio')
+        data_fim = request.form.get('data_fim')
+
+        cursor.execute('UPDATE campanhas SET titulo = %s, descricao = %s, meta_financeira = %s, meta_itens = %s, data_inicio = %s, data_fim = %s WHERE id = %s', 
+                       (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim, id))
+        conexao.connection.commit()
+        cursor.close()
+        
+        return redirect(url_for('listar_campanhas'))
+
+    return render_template('editar_campanha.html', campanha=campanha)  # Certifique-se de criar este template

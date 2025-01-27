@@ -274,6 +274,21 @@ header a{
     border-radius: 10px;
     height: 35px;
 }
+.butao{
+    display: flex;
+    background-color: red;
+    width: 100px;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    height: 30px;
+    border: none;
+    
+}
+.div-campanha{
+    display: flex;
+}
 
 .infor .butao:hover{
     background-color: white;
@@ -284,6 +299,7 @@ header a{
 /* CORPO */
 
 .container{
+    display: flex;
     z-index: 1;
     width: 100%;
     height: 100%;
@@ -346,4 +362,51 @@ header a{
     display: flex;
     flex-direction: column;
     width: 90%;
+}
+
+/* campanhas */
+.blocos_de_campahas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 20px;
+}
+
+.bloquinho_campanha {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 10px;
+    width: 300px;
+    height: 320px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.bloquinho_campanha:hover {
+    transform: scale(1.02);
+}
+
+.info-campanha h3 {
+    font-size: 1.5em;
+    color: #333;
+    margin: 0 0 10px;
+}
+
+.info-campanha h4 {
+    font-size: 1.1em;
+    color: #555;
+    margin: 5px 0;
+}
+
+.datas {
+    font-style: italic;
+    color: #777;
+}
+
+@media (max-width: 768px) {
+    .bloquinho_campanha {
+        width: calc(100% - 20px); /* Exibe em tela cheia em dispositivos menores */
+    }
 }

@@ -5,7 +5,7 @@
 <div class="area-cadastro">
     <h2>Faça uma boa ação e cadastre sua Campanha</h2>
 
-    <form class="formulario" action="{{ url_for('campanhas') }} ">
+    <form class="formulario" action="{{ url_for('campanhas') }} " method="post">
 
         <div class="info-form"><label for="titulo">Título:</label>
         <input type="text" name="titulo" id="titulo" required>
@@ -26,20 +26,6 @@
         <input type="date" name="data_fim" id="data_fim" required>
 </div>
         
-        
-        
-        
-        
-        
-        <!-- <label for="status">Status:</label> -->
-
-        <!-- <div class="status">
-            <input type="checkbox" name="desativada" id="">
-            <span class="checkmark">Desativada</span>
-            
-            <input type="checkbox" name="ativada" id="">
-            <span class="checkmark">Ativada</span>
-        </div> -->
         <button class="but-campanha" type="submit">Cadastrar Campanha</button>
     </form>
 
