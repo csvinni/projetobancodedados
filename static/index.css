@@ -309,29 +309,20 @@ header a{
 
 .formulario{
     width: 700px;
-    height: 380px;
+    max-height: 1580px;
     display: flex;
+    padding: 20px;
     flex-direction: column;
-    background-color: gainsboro;
-    border: 2px black solid;
+    background-color: rgb(233, 233, 233);
+    border: 1px black solid;
     border-radius: 10px;
     justify-content: center;
+    box-shadow: #333 1px 1px 20px;
     align-items: center;
-    gap: 8px;
 }
 
-
-.formulario2{
-    width: 300px;
-    height: 280px;
-    display: flex;
-    flex-direction: column;
-    background-color: gainsboro;
-    border: 2px black solid;
-    border-radius: 10px;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
+.mb-3{
+    width: 500px;
 }
 
 .area-cadastro{
@@ -345,8 +336,8 @@ header a{
 .area-cadastro button{
     background-color: red;
     color: white;
-    width: 150px;
-    height: 40px;
+    max-width: 500px;
+    max-height: 100px;
     font-weight: bold;
     border-radius: 10px;
     border: none;

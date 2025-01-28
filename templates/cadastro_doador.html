@@ -6,22 +6,22 @@
         <h2>Faça uma boa ação e muda a vida do próximo</h2>
         <form class="formulario" action="{{url_for('cadastro_doador')}}" method="post">
 
-            <div class="info-form">
-                <label for="name">Nome:</label>
-                <input type="text" name="nome" placeholder="Nome">
+            <div class="mb-3">
+                <label for="name"  class="form-label">Nome:</label>
+                <input type="text" name="nome"  class="form-control" placeholder="Nome">
             </div>
 
-            <div class="info-form">
-                <label for="e-mail">E-mail:</label>
-                <input type="email" name="email" placeholder="Email">
+            <div class="mb-3">
+                <label for="e-mail" class="form-label">E-mail:</label>
+                <input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
             </div>
 
-            <div class="info-form">
-                <label for="telefone">Contato:</label>
-                <input type="tel" name="telefone" placeholder="Telefone">
+           <div class="mb-3">
+                <label for="telefone" class="form-label">Contato:</label>
+                <input type="tel" name="telefone" class="form-control" placeholder="Telefone">
             </div>
 
-            <button type="submit" class="but-doar">DOAR</button>
+            <button type="submit" class="btn btn-primary">DOAR</button>
 
             <!-- APÓS O TELEFONE DEVE-SE MOSTRAR OS HISTÓRICO DE DOAÇÕES DO DOADOR IDENTIFICADO -->
         </form>
