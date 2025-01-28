@@ -3,14 +3,14 @@
 {% block title %}Campanhas{% endblock %}
 
 {% block content %}
-<h2>Lista de Campanhas</h2>
 
-    </thead>
-    <tbody>
-        
-        <div class="blocos_de_campahas">
-            {% if campanhas %}
-                {% for campanha in campanhas %}
+<div class="lista-c">
+
+    <h2>Lista de Campanhas</h2>
+
+    <div class="blocos_de_campahas">
+        {% if campanhas %}
+            {% for campanha in campanhas %}
 
                     <div class="bloquinho_campanha">
 
@@ -24,7 +24,6 @@
                                 <form action="{{url_for('doador')}}" method="post">
                                     <button class="butao" type="submit">Quero doar</button>
                                 </form>
-
                             </div>
 
                         <div class="div-campanha">
@@ -34,11 +33,13 @@
                             </form>
                         </div>
                     </div>
-                {% endfor %}
+
+            {% endfor %}
+
             {% else %}
                 <p>Nenhuma campanha encontrada.</p>
-            {% endif %}
-        </div>
-    </tbody>
-</table>
+        {% endif %}
+    </div>
+</div>
+
 {% endblock %}

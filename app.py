@@ -63,7 +63,8 @@ def campanhas():
             conexao.connection.rollback()  
         finally:
             cursor.close()
-        return render_template('cadastro_campanhas.html')
+        return redirect(url_for('listar_campanhas'))
+
     return render_template('cadastro_campanhas.html')
     
 
@@ -71,6 +72,7 @@ def campanhas():
 @app.route('/itens_doacoes',  methods = (['GET', 'POST']))
 def itens_doacoes():
     return  render_template('itens_doacoes.html')
+
 
 @app.route('/listar_campanhas', methods=['GET', 'POST'])
 def listar_campanhas():

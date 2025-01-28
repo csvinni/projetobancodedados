@@ -1,9 +1,17 @@
-{% extends 'layout.html' %}
-{% block title %} index {% endblock %}
-{% block content %}
-
-<h1>oi</h1>
-<a href="{{url_for('campanhas')}}">Campanhas</a> <br>
-<a href="{{url_for('edicao')}}">Edicao</a>
-
-{% endblock %}
+    {% extends 'layout.html' %}
+    {% block title %} index {% endblock %}
+    {% block content %}
+    
+        <div class="conteudo">
+            <h1>Transforme vidas: Sua Doação Faz a Diferença!</h1>
+            <p class="texto">
+                Junte-se a nós na missão de transformar o mundo, 
+                um gesto de generosidade de cada vez! No nosso site, 
+                você encontrará campanhas inspiradoras que precisam da sua ajuda. 
+                Seja apoiando crianças carentes, promovendo saúde, ou protegendo o meio ambiente, 
+                cada contribuição conta. Descubra como sua doação pode criar oportunidades, 
+                levar esperança e fazer brilhar um sorriso.
+            </p>    
+        </div>
+    </div>
+    {% endblock %}
