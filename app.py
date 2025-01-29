@@ -155,10 +155,32 @@ def itens_doacao():
 @app.route('/listar_campanhas', methods=['GET', 'POST'])
 def listar_campanhas():
     cursor = conexao.connection.cursor()
-    campanhas = []
+    query = "SELECT * FROM campanhas"
+    params = []
+    
+    datainicial_filter = request.args.get('data-inicial')
+    datafinal_filter = request.args.get('data-final')
 
-    cursor.execute("SELECT * FROM campanhas")
-    campanhas = cursor.fetchall() 
+    if datafinal_filter and datainicial_filter:
+        query += " WHERE data_inicio >= %s and data_fim <= %s"
+        params.append(datainicial_filter)
+        params.append(datafinal_filter)
+    else:
+        if datainicial_filter:
+            query += " WHERE data_inicio >= %s"
+            params.append(datainicial_filter)
+        if datafinal_filter:
+            query += " WHERE data_fim <= %s"
+            params.append(datafinal_filter)
+    # if prioridade_filter:
+    #     query += " AND prioridade = %s"
+    #     params.append(prioridade_filter)
+    # if categoria_filter:
+    #     query += " AND categoria = %s"
+    #     params.append(categoria_filter)
+
+    cursor.execute(query, params)
+    campanhas = cursor.fetchall()
 
     cursor.close()
     return render_template('listar_campanhas.html', campanhas=campanhas)
@@ -185,7 +207,45 @@ def listar_doacoes():
 
 @app.route('/relatorios',  methods = (['GET', 'POST']))
 def relatorios():
-    return  render_template('relatorios.html')
+
+    cursor = conexao.connection.cursor()
+    query = "SELECT SUM(valor) FROM doacoes"
+    params = []
+    
+    datainicial_filter = request.args.get('data-inicial')
+    datafinal_filter = request.args.get('data-final')
+
+    if datafinal_filter and datainicial_filter:
+        query += " WHERE data_doacao >= %s and data_doacao <= %s"
+        params.append(datainicial_filter)
+        params.append(datafinal_filter)
+    else:
+        if datainicial_filter:
+            query += " WHERE data_doacao >= %s"
+            params.append(datainicial_filter)
+        if datafinal_filter:
+            query += " WHERE data_doacao <= %s"
+            params.append(datafinal_filter)
+  
+    cursor.execute(query, params)
+    totalarrecadado = cursor.fetchone()
+    total = totalarrecadado['SUM(valor)']
+
+    query_top_donors = """
+        SELECT d.nome, SUM(do.valor) AS total_doacao
+        FROM doacoes do
+        JOIN doadores d ON d.id = do.id_doador
+        GROUP BY d.nome
+        ORDER BY total_doacao DESC
+        LIMIT 10
+    """
+
+    cursor.execute(query_top_donors)
+    top_donors = cursor.fetchall()  # Lista dos maiores doadores
+
+    cursor.close()
+
+    return render_template('relatorios.html', total=total, top_donors=top_donors)
 
 
 @app.route('/concluida/<int:id>', methods=['POST'])

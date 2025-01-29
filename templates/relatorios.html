@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+{% block title %} index {% endblock %}
+{% block content %}
+
+
+<div class="rel-m">
+    <h2>Relatórios</h2>
+    <div style="gap: 15px; display: flex; flex-direction: column;">
+            <form method="GET" action="{{ url_for('relatorios') }}">
+                <h2>Filtrar:</h2>
+                <label for="data-inicial" class="form-label">Data-inicial:</label>
+                <input type="date" name="data-inicial" class="form-control">
+                
+                <label for="data-final" class="form-label">Data-final:</label>
+                <input type="date" name="data-final" class="form-control">
+                
+                <button type="submit" class="btn btn-primary" style="background-color: red; border: none; margin-top: 10px;">Filtrar</button>
+            </form>
+
+        <h3>Total arrecadado: {{ total }}</h3>
+    </div>
+    
+    <div>
+            <h3>Top 10 maiores doadores:</h3>
+        <table  class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Total doado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doador in top_donors %}
+                    <tr>
+                        <td>{{ doador['nome'] }}</td>
+                        <td>{{ doador['total_doacao'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+
+</div>
+
+{% endblock %}
+

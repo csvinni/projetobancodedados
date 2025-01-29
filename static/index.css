@@ -43,9 +43,10 @@ header a{
 .infor{
     display: flex;
     width: 800px;
+    gap: 10px;
     align-items: center;
     justify-content: space-around;
-    padding-right: 10px;
+    padding-right: 20px;
 }
 
 .infor .butao{
@@ -203,7 +204,7 @@ header a{
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    width: 95px;
+    width: 95px;;
     transition: background-color 0.3s, transform 0.2s;
     display: inline-block; /* Para botões se comportarem como blocos */
     margin-top: 10px; /* Adicione espaço acima dos botões */
@@ -246,4 +247,11 @@ header a{
     align-items: center;
     flex-direction: column;
     width: 100%;
+}
+
+.rel-m{
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    align-items: center;
 }

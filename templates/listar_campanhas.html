@@ -9,7 +9,18 @@
 
     <h2 class="tarefas">Tarefas da Categoria {{ categoria_id }}</h2>  <!-- Exibe a categoria -->
 
+    <form method="GET" action="{{url_for('listar_campanhas')}}">
+        <h2>Filtrar:</h2>
+        <label for="data-inicial">Data-inicial:</label>
+        <input type="date" name="data-inicial">
+        <label for="data-final">Data-final:</label>
+        <input type="date" name="data-final">
+        
+        <button type="submit">Filtrar</button>
+    </form>
+
     <div class="campanhas-c">
+
          {% if campanhas %}
             {% for campanha in campanhas %}
                 <div class="bloquinho_campanha">
