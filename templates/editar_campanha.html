@@ -35,6 +35,15 @@
                 <input type="date" name="data_fim" id="data_fim" class="form-control" required value="{{ campanha['data_fim']}}">
             </div>
         </div>
+        <div class="form-mb">
+            <label class="form-label">Status:</label>
+            <select name="status">
+                <option value="ativa" {% if campanha.status == 'ativa' %}selected{% endif %}>Ativa</option>
+                <option value="concluida" {% if campanha.status == 'concluida' %}selected{% endif %}>Concluída</option>
+                <option value="cancelada" {% if campanha.status == 'cancelada' %}selected{% endif %}>Cancelada</option>
+            </select>
+        </div>
+        
         
         <button class="btn btn-primary" type="submit">Atualizar</button>
     </form>

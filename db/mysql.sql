@@ -35,8 +35,6 @@ CREATE TABLE doacoes (
     data_doacao DATE NOT NULL,
     FOREIGN KEY (id_doador) REFERENCES doadores(id),
     FOREIGN KEY (id_campanha) REFERENCES campanhas(id)
-    FOREIGN KEY (id_campanha) REFERENCES campanhas(id)
-
 );
 
 

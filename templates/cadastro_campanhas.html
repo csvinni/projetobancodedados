@@ -9,7 +9,7 @@
     <form class="formulario" action="{{ url_for('campanhas') }} " method="post">
 
         <div class="mb-3">
-                <label for="titulo" class="form-label">Título:</label>
+                <label for="titulo" class="form-text">Título:</label>
                 <input type="text" name="titulo" id="titulo" class="form-control" required>
         </div>
         <div class="mb-3">
@@ -32,9 +32,17 @@
                         <input type="date" name="data_inicio" id="data_inicio" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                        <label for="data_fim" class="form-label">Data de Fim:</label>
+                        <label for="data_fim" class="form-label">Data de Fim:</label>   
                         <input type="date" name="data_fim" id="data_fim" required class="form-control">
                 </div>
+       </div>
+       <div class="form-mb">
+                <label class="form-label">Status:</label>
+                <select name="status">
+                        <option value="ativa">Ativa</option>
+                        <option value="concluida">Concluída</option>
+                        <option value="cancelada">Cancelada</option>
+                </select>
        </div>
         
         <button class="btn btn-primary" type="submit">Cadastrar Campanha</button>

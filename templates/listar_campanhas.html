@@ -6,8 +6,11 @@
 
 <div class="lista-c">
     <h2>Lista de Campanhas</h2>
-    <div class="blocos_de_campahas">
-        {% if campanhas %}
+
+    <h2 class="tarefas">Tarefas da Categoria {{ categoria_id }}</h2>  <!-- Exibe a categoria -->
+
+    <div class="campanhas-c">
+         {% if campanhas %}
             {% for campanha in campanhas %}
                 <div class="bloquinho_campanha">
                     <div class="info-campanha">
@@ -17,6 +20,8 @@
                         <h4>Meta itens: {{ campanha['meta_itens'] }}</h4>
                         <h4 class="datas">Data Inicial: {{ campanha['data_inicio'] }}</h4>
                         <h4 class="datas">Data Limite: {{ campanha['data_fim'] }}</h4>
+                        <h4>Status: {{ campanha['status'] }}</h4>
+
                         <div class="botoes">
                                 <form action="{{url_for('doador')}}" method="post">
                                     <button class="butao" type="submit">Quero doar</button>
@@ -37,6 +42,7 @@
             <p>Nenhuma campanha encontrada.</p>
         {% endif %}
     </div>
+       
 </div>
 
 {% endblock %}

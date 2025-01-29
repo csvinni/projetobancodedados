@@ -64,7 +64,7 @@ def doador():
         if cursor:  # Verifique se o cursor foi criado antes de fechá-lo
             cursor.close()
 
-    return render_template('doador.html', doadores=doadores)
+    return render_template('listar_doadores.html', doadores=doadores)
 
 
 @app.route('/campanhas', methods=['GET', 'POST'])
@@ -77,11 +77,12 @@ def campanhas():
         meta_itens = request.form.get('meta_itens')
         data_inicio = request.form.get('data_inicio')
         data_fim = request.form.get('data_fim')
+        status = request.form.get('status')
 
-        INSERT = 'INSERT INTO campanhas(titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim) VALUES (%s, %s, %s, %s, %s, %s)'
+        INSERT = 'INSERT INTO campanhas(titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim,status) VALUES (%s, %s, %s, %s, %s, %s,%s)'
         
         try:
-            cursor.execute(INSERT, (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim)) 
+            cursor.execute(INSERT, (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim, status)) 
             conexao.connection.commit()  
         except Exception as e:
             print(f"An error occurred: {e}")  
@@ -200,7 +201,7 @@ def concluida(id):
 @app.route('/editar/<int:id>', methods=['POST', 'GET'])
 def editar(id):
     cursor = conexao.connection.cursor()
-    cursor.execute('SELECT id, titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim FROM campanhas WHERE id = %s', (id,))
+    cursor.execute('SELECT id, titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim, status FROM campanhas WHERE id = %s', (id,))
     campanha = cursor.fetchone()
     
     if request.method == 'POST':
@@ -209,10 +210,11 @@ def editar(id):
         meta_financeira = request.form.get('meta_financeira')
         meta_itens = request.form.get('meta_itens')
         data_inicio = request.form.get('data_inicio')
+        status = request.form.get('status')
         data_fim = request.form.get('data_fim')
 
-        cursor.execute('UPDATE campanhas SET titulo = %s, descricao = %s, meta_financeira = %s, meta_itens = %s, data_inicio = %s, data_fim = %s WHERE id = %s', 
-                       (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim, id))
+        cursor.execute('UPDATE campanhas SET titulo = %s, descricao = %s, meta_financeira = %s, meta_itens = %s, data_inicio = %s, data_fim = %s, status = %s WHERE id = %s', 
+                       (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim, status, id))
         conexao.connection.commit()
         cursor.close()
         

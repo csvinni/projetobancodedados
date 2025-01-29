@@ -5,6 +5,7 @@
     <div class="mb-3">
         <label for="doador_id" class="form-label">Doador</label>
         <select name="id_doador" class="form-control" required>
+            <option value="">---</option>
             {% for doador in doadores %}
                 <option value="{{ doador.id }}">{{ doador.nome }}</option>
             {% endfor %}
@@ -14,6 +15,7 @@
     <div class="mb-3">
         <label for="campanha_id" class="form-label">Campanha</label>
         <select name="id_campanha" class="form-control" required>
+            <option value="">---</option>
             {% for campanha in campanhas %}
                 <option value="{{ campanha.id }}">{{ campanha.titulo }}</option>
             {% endfor %}
@@ -23,6 +25,7 @@
     <div class="mb-3">
         <label for="tipo_doacao" class="form-label">Tipo de Doação</label>
         <select name="tipo_doacao" class="form-control" id="tipo_doacao" required>
+            <option value="">---</option>
             <option value="dinheiro">Dinheiro</option>
             <option value="itens">Itens</option>
         </select>

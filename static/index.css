@@ -150,7 +150,21 @@ header a{
     flex-direction: column;
     width: 90%;
 }
-
+.form-text{
+    
+}
+.lista-c{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+.campanhas-c{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
 /* campanhas */
 
 .bloquinho_campanha {
@@ -228,9 +242,10 @@ header a{
 
 }
 
-table{
-    margin-right: 130px;
-    margin-top: 100px;
-    width: 100px;
-    height: 100px;
+.div-doacoes{
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
 }
