@@ -1,4 +1,3 @@
-
 CREATE DATABASE IF NOT EXISTS `db_banco`;
 USE `db_banco`;
 
@@ -18,27 +17,27 @@ CREATE TABLE campanhas (
     data_inicio DATE,
     status TEXT NOT NULL,
     data_fim DATE
-    
 );
 
-CREATE TABLE itens (
+CREATE TABLE categorias (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    nome TEXT NOT NULL, 
-    descricao TEXT NOT NULL, 
-    categoria TEXT NOT NULL
+    nome TEXT NOT NULL
 );
 
 CREATE TABLE doacoes (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_doador INT NOT NULL,
     id_campanha INT NOT NULL,
-    id_item INT NOT NULL,
-    quant INT NOT NULL, 
-    data_doacao DATE,
+    tipo_doacao TEXT NOT NULL,
+    tipo_item TEXT,  -- Apenas para doações de itens
+    quantidade INT,  -- Apenas para doações de itens
+    valor DECIMAL(10, 2),  -- Apenas para doações de dinheiro
+    data_doacao DATE NOT NULL,
     FOREIGN KEY (id_doador) REFERENCES doadores(id),
-    FOREIGN KEY (id_campanha) REFERENCES campanhas(id),
-    FOREIGN KEY (id_item) REFERENCES itens(id)
+    FOREIGN KEY (id_campanha) REFERENCES campanhas(id)
 );
+
+
 
 CREATE TABLE relatorios (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,

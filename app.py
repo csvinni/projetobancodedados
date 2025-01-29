@@ -20,27 +20,52 @@ def index():
 def edicao():
     return render_template('edicao.html')
 
-@app.route('/doador', methods = (['GET', 'POST']))
+@app.route('/doador', methods=['GET', 'POST'])
 def doador():
+    doador_id = None  # Inicialize a variável doador_id
+
+    # Inicialize o cursor fora do bloco POST
+    cursor = None
+
     if request.method == 'POST':
-        cursor = conexao.connection.cursor()
         nome = request.form.get('nome')
         telefone = request.form.get('telefone')
         email = request.form.get('email')
-        INSERT = 'INSERT INTO doadores(nome,email,telefone) VALUES (%s, %s, %s)'
+
+        # Inserindo o doador
+        INSERT_D = 'INSERT INTO doadores(nome, email, telefone) VALUES (%s, %s, %s)'
         
         try:
-            cursor.execute(INSERT, (nome, email, telefone)) 
+            cursor = conexao.connection.cursor()  # Criação do cursor
+            cursor.execute(INSERT_D, (nome, email, telefone)) 
             conexao.connection.commit()  
+            doador_id = cursor.lastrowid  
         except Exception as e:
             print(f"An error occurred: {e}")  
             conexao.connection.rollback()  
         finally:
+            if cursor:  # Verifique se o cursor foi criado antes de fechá-lo
+                cursor.close()
+
+        if doador_id is not None:  # Verifique se doador_id foi definido
+            return redirect(url_for('itens_doacao', doador_id=doador_id))
+        else:
+            return "Erro ao registrar doador", 500  # Mensagem de erro
+
+    # Para lidar com o GET, vamos buscar os doadores
+    try:
+        cursor = conexao.connection.cursor()  # Criação do cursor para a consulta
+        cursor.execute("SELECT id, nome FROM doadores")  # Consulta
+        doadores = cursor.fetchall()  # Obtenha os resultados
+    except Exception as e:
+        print(f"An error occurred while fetching doadores: {e}")
+        doadores = []
+    finally:
+        if cursor:  # Verifique se o cursor foi criado antes de fechá-lo
             cursor.close()
 
-        return render_template('doador.html')
+    return render_template('doador.html', doadores=doadores)
 
-    return render_template('doador.html')
 
 @app.route('/campanhas', methods=['GET', 'POST'])
 def campanhas():
@@ -69,10 +94,62 @@ def campanhas():
     
 
 
-@app.route('/itens_doacoes',  methods = (['GET', 'POST']))
-def itens_doacoes():
-    return  render_template('itens_doacoes.html')
+@app.route('/itens_doacao', methods=['POST', 'GET'])
+def itens_doacao():
+    cursor = conexao.connection.cursor()  
+    
+    if request.method == 'POST':
+        id_doador = request.form.get('id_doador')
+        id_campanha = request.form.get('id_campanha')
+        tipo_doacao = request.form.get('tipo_doacao')
+        
+        # Verifique o tipo de doação e obtenha os dados necessários
+        if tipo_doacao == 'itens':
+            tipo_item = request.form.get('tipo_item')
+            quantidade = request.form.get('quantidade')
+            valor = None 
+        elif tipo_doacao == 'dinheiro':
+            tipo_item = None  
+            quantidade = None  
+            valor = request.form.get('valor')
 
+        data_doacao = request.form.get('data_doacao')
+
+        try:
+            # Inserir os dados de doação no banco de dados
+            INSERT = '''INSERT INTO doacoes(id_doador, id_campanha, tipo_doacao, tipo_item, quantidade, valor, data_doacao) 
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)'''
+
+            cursor.execute(INSERT, (id_doador, id_campanha, tipo_doacao, tipo_item, quantidade, valor, data_doacao))
+            conexao.connection.commit()
+            return redirect(url_for('listar_doacoes'))  
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            conexao.connection.rollback()  
+            return "Erro ao registrar doação. Tente novamente mais tarde.", 500  
+        finally:
+            cursor.close()
+
+ 
+    try:
+        cursor.execute("SELECT id, nome FROM doadores")
+        doadores = cursor.fetchall()
+
+        cursor.execute("SELECT id, titulo FROM campanhas")
+        campanhas = cursor.fetchall()
+
+        cursor.execute("SELECT id, nome FROM categorias")  
+        categorias = cursor.fetchall()
+
+    except Exception as e:
+        print(f"An error occurred while fetching data: {e}")
+        doadores = []
+        campanhas = []
+        categorias = []
+    finally:
+        cursor.close()
+
+    return render_template('cadastro_itens_doacoes.html', doadores=doadores, campanhas=campanhas, categorias=categorias)
 
 @app.route('/listar_campanhas', methods=['GET', 'POST'])
 def listar_campanhas():
@@ -87,13 +164,22 @@ def listar_campanhas():
 
 
 
-@app.route('/listar_doadores',  methods = (['GET', 'POST']))
-def listar_doadores():
-    cursor = conexao.connection.cursor()  
-    cursor.execute("SELECT * FROM doadores") 
-    doadores = cursor.fetchall() 
+@app.route('/listar_doacoes', methods=['GET'])
+def listar_doacoes():
+    cursor = conexao.connection.cursor()
+    cursor.execute("""
+        SELECT d.id, do.nome AS doador_nome, c.titulo AS campanha_titulo, 
+               cat.nome AS categoria_nome, d.quantidade, d.valor, d.tipo_doacao, d.data_doacao
+        FROM doacoes d
+        JOIN doadores do ON d.id_doador = do.id
+        JOIN campanhas c ON d.id_campanha = c.id
+        JOIN categorias cat ON d.id_categoria = cat.id
+    """)
+    doacoes = cursor.fetchall()
     cursor.close()
-    return  render_template('listar_doadores.html', doadores=doadores)
+
+    return render_template('listar_doacoes.html', doacoes=doacoes)
+
 
 
 

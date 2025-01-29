@@ -153,38 +153,16 @@ header a{
 
 /* campanhas */
 
-.blocos_de_campahas {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.lista-c{
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-}
-
 .bloquinho_campanha {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 20px;
     margin: 10px;
-    width: 300px;
-    height: 320px;
+    width: 350px;
+    height: auto;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
-}
-
-.bloquinho_campanha:hover {
-    transform: scale(1.02);
-}
-
-.info-campanha h3 {
-    font-size: 1.5em;
-    color: #333;
-    margin: 0 0 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .info-campanha h4 {
@@ -193,13 +171,41 @@ header a{
     margin: 5px 0;
 }
 
-.datas {
-    font-style: italic;
-    color: #777;
+.editar-link {
+    margin-top: 10px; /* Adicione espaço acima */
+    margin-right: 10px;
+    color: #e67e22;
+    text-decoration: none;
+    transition: color 0.3s;
 }
 
-@media (max-width: 768px) {
-    .bloquinho_campanha {
-        width: calc(100% - 20px); /* Exibe em tela cheia em dispositivos menores */
-    }
+.editar-link:hover {
+    color: #d35400; /* Cor mais escura ao passar o mouse */
+    text-decoration: underline;
+}
+
+/* Estilos dos botões */
+.butao {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 95px;
+    transition: background-color 0.3s, transform 0.2s;
+    display: inline-block; /* Para botões se comportarem como blocos */
+    margin-top: 10px; /* Adicione espaço acima dos botões */
+}
+
+.butao:hover, .concluir-botao:hover {
+    background-color: red;
+    transform: translateY(-2px); /* Efeito de elevação ao passar o mouse */
+}
+
+
+.botoes{
+    display:flex;
+    flex-direction: row;
+    gap: 15px;
+    
 }
