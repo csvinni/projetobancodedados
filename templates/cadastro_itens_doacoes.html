@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h2>Faça sua doação</h2>
-<form action="{{ url_for('itens_doacao') }}" method="POST" class="formulario">
+
+<form action="{{ url_for('itens_doacao') }}" method="POST" class="formulario_doacao">
     <div class="mb-3">
         <label for="doador_id" class="form-label">Doador</label>
         <select name="id_doador" class="form-control" required>

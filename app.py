@@ -50,7 +50,7 @@ def doador():
         if doador_id is not None:  # Verifique se doador_id foi definido
             return redirect(url_for('itens_doacao', doador_id=doador_id))
         else:
-            return "Erro ao registrar doador", 500  # Mensagem de erro
+            return render_template('cadastro_doador.html')  # Mensagem de erro
 
     # Para lidar com o GET, vamos buscar os doadores
     try:
@@ -169,11 +169,10 @@ def listar_doacoes():
     cursor = conexao.connection.cursor()
     cursor.execute("""
         SELECT d.id, do.nome AS doador_nome, c.titulo AS campanha_titulo, 
-               cat.nome AS categoria_nome, d.quantidade, d.valor, d.tipo_doacao, d.data_doacao
+         d.quantidade, d.valor, d.tipo_doacao, d.data_doacao
         FROM doacoes d
         JOIN doadores do ON d.id_doador = do.id
         JOIN campanhas c ON d.id_campanha = c.id
-        JOIN categorias cat ON d.id_categoria = cat.id
     """)
     doacoes = cursor.fetchall()
     cursor.close()

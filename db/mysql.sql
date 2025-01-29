@@ -29,12 +29,14 @@ CREATE TABLE doacoes (
     id_doador INT NOT NULL,
     id_campanha INT NOT NULL,
     tipo_doacao TEXT NOT NULL,
-    tipo_item TEXT,  -- Apenas para doações de itens
-    quantidade INT,  -- Apenas para doações de itens
-    valor DECIMAL(10, 2),  -- Apenas para doações de dinheiro
+    tipo_item TEXT,  
+    quantidade INT,  
+    valor DECIMAL(10, 2), 
     data_doacao DATE NOT NULL,
     FOREIGN KEY (id_doador) REFERENCES doadores(id),
     FOREIGN KEY (id_campanha) REFERENCES campanhas(id)
+    FOREIGN KEY (id_campanha) REFERENCES campanhas(id)
+
 );
 
 

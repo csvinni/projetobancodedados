@@ -209,3 +209,28 @@ header a{
     gap: 15px;
     
 }
+
+
+/* parte de doação */
+.formulario_doacao{
+    width: 800px;
+    height: 600px;
+    margin-top: 40px;
+    display: flex;
+    padding: 70px;
+    flex-direction: column;
+    background-color: rgb(233, 233, 233);
+    border: 1px black solid;
+    border-radius: 10px;
+    justify-content: center;
+    box-shadow: #333 1px 1px 20px;
+    align-items: center;
+
+}
+
+table{
+    margin-right: 130px;
+    margin-top: 100px;
+    width: 100px;
+    height: 100px;
+}

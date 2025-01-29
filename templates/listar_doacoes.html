@@ -1,9 +1,11 @@
 {% extends 'layout.html' %}
-{% block title %} Doações Registradas {% endblock %}
+{% block title %}Doações Registradas{% endblock %}
 {% block content %}
 
-<h2>lista de Doações</h2>
-<table class="table">
+
+
+<h2 class="h2-lista">Lista de Doações</h2>
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Doador</th>
@@ -22,9 +24,13 @@
                 <td>{{ doacao.campanha_titulo }}</td>
                 <td>{{ doacao.categoria_nome }}</td>
                 <td>{{ doacao.tipo_doacao }}</td>
-                <td>{{ doacao.quantidade if doacao.tipo_doacao == 'itens' else 'N/A' }}</td>
-                <td>{{ doacao.valor if doacao.tipo_doacao == 'dinheiro' else 'N/A' }}</td>
+                <td>{{ doacao.quantidade if doacao.tipo_doacao == 'itens' else '--' }}</td>
+                <td>{{ doacao.valor if doacao.tipo_doacao == 'dinheiro' else '--' }}</td>
                 <td>{{ doacao.data_doacao }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7" class="text-center">Nenhuma doação registrada.</td>
             </tr>
         {% endfor %}
     </tbody>
