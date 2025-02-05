@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% block title %} index {% endblock %}
+{% block content %}
+
+
+<div class="area-cadastro">
+    <h2> Faça seu login </h2>
+    <form class="formulario" action="{{ url_for('login_admin') }}" method="post">
+    
+        <div class="mb-3">
+            <label for="email" class="form-label">E-mail:</label>
+            <input type="email" name="email" class="form-control" placeholder="Email" required>
+        </div>
+        <div class="mb-3">
+            <label for="senha" class="form-label">Senha:</label>
+            <input type="password" name="senha" class="form-control" placeholder="Senha" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+</div>
+
+
+
+{% endblock %}
