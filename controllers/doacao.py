@@ -1,75 +1,71 @@
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask_login import login_required, current_user
+from models.models import Doacao, Doador, Campanha
+from database.config import Session 
+from datetime import datetime
+from sqlalchemy.exc import SQLAlchemyError
 
+doacao_bp = Blueprint('doacao', __name__, template_folder='templates')
+session = Session()
 
-@app.route('/itens_doacao', methods=['POST', 'GET'])
+@doacao_bp.route('/itens_doacao', methods=['GET', 'POST'])
+@login_required
 def itens_doacao():
-    cursor = conexao.connection.cursor()  
-    
+    session = Session()
+
     if request.method == 'POST':
+        print("Dados recebidos:", request.form)  # Para depuração
+
         id_doador = request.form.get('id_doador')
         id_campanha = request.form.get('id_campanha')
-        tipo_doacao = request.form.get('tipo_doacao')
-        
-        # Verifique o tipo de doação e obtenha os dados necessários
-        if tipo_doacao == 'itens':
-            tipo_item = request.form.get('tipo_item')
-            quantidade = request.form.get('quantidade')
-            valor = None 
-        elif tipo_doacao == 'dinheiro':
-            tipo_item = None  
-            quantidade = None  
-            valor = request.form.get('valor')
-
+        valor = request.form.get('valor')
         data_doacao = request.form.get('data_doacao')
+        data_doacao = datetime.strptime(data_doacao, '%Y-%m-%d').date()
+
+        # Validar se os campos obrigatórios estão preenchidos
+        if not id_doador or not id_campanha or not valor or not data_doacao:
+            flash('Todos os campos obrigatórios devem ser preenchidos.')
+            return redirect(url_for('doacao.itens_doacao'))
+
+        nova_doacao = Doacao(
+            id_doador=int(id_doador),
+            id_campanha=int(id_campanha),
+            valor=float(valor),
+            data_doacao=data_doacao
+        )
 
         try:
-            # Inserir os dados de doação no banco de dados
-            INSERT = '''INSERT INTO doacoes(id_doador, id_campanha, tipo_doacao, tipo_item, quantidade, valor, data_doacao) 
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)'''
-
-            cursor.execute(INSERT, (id_doador, id_campanha, tipo_doacao, tipo_item, quantidade, valor, data_doacao))
-            conexao.connection.commit()
-            return redirect(url_for('listar_doacoes'))  
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            conexao.connection.rollback()  
-            return "Erro ao registrar doação. Tente novamente mais tarde.", 500  
+            session.add(nova_doacao)
+            session.commit()
+            flash('Doação registrada com sucesso!')
+            return redirect(url_for('doacao.listar_doacoes'))
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(f"Erro ao registrar a doação: {e}")  # Para depuração
+            flash('Erro ao registrar a doação. Tente novamente mais tarde.')
+            return redirect(url_for('doacao.itens_doacao'))
         finally:
-            cursor.close()
+            session.close()  
 
- 
-    try:
-        cursor.execute("SELECT id, nome FROM doadores")
-        doadores = cursor.fetchall()
+    doadores = session.query(Doador).all()
+    campanhas = session.query(Campanha).all()
+    session.close()  
+    return render_template('doacao/cadastro_itens_doacoes.html', doadores=doadores, campanhas=campanhas)
 
-        cursor.execute("SELECT id, titulo FROM campanhas")
-        campanhas = cursor.fetchall()
-
-        cursor.execute("SELECT id, nome FROM categorias")  
-        categorias = cursor.fetchall()
-
-    except Exception as e:
-        print(f"An error occurred while fetching data: {e}")
-        doadores = []
-        campanhas = []
-        categorias = []
-    finally:
-        cursor.close()
-
-    return render_template('cadastro_itens_doacoes.html', doadores=doadores, campanhas=campanhas, categorias=categorias)
-
-
-@app.route('/listar_doacoes', methods=['GET'])
+@doacao_bp.route('/listar_doacoes', methods=['GET'])
+@login_required
 def listar_doacoes():
-    cursor = conexao.connection.cursor()
-    cursor.execute("""
-        SELECT d.id, do.nome AS doador_nome, c.titulo AS campanha_titulo, 
-         d.quantidade, d.valor, d.tipo_doacao, d.data_doacao
-        FROM doacoes d
-        JOIN doadores do ON d.id_doador = do.id
-        JOIN campanhas c ON d.id_campanha = c.id
-    """)
-    doacoes = cursor.fetchall()
-    cursor.close()
+    doacoes = (
+        session.query(
+            Doacao.valor,  # Pegando o valor da doação
+            Doacao.data_doacao,  # Pegando a data da doação
+            Doador.nome.label('doador_nome'),
+            Campanha.titulo.label('campanha_titulo')
+        )
+        .join(Doador, Doacao.id_doador == Doador.id)
+        .join(Campanha, Doacao.id_campanha == Campanha.id)
+        .filter(Campanha.admin_id == current_user.id)  # Filtra por admin logado
+        .all())
 
-    return render_template('listar_doacoes.html', doacoes=doacoes)
-
+    session.close() 
+    return render_template('doacao/listar_doacoes.html', doacoes=doacoes)

@@ -9,7 +9,7 @@
 
     <h2 class="tarefas">Tarefas da Categoria {{ categoria_id }}</h2>  <!-- Exibe a categoria -->
 
-    <form method="GET" action="{{url_for('listar_campanhas')}}">
+    <form method="GET" action="{{url_for('campanha.listar_campanhas')}}">
         <h2>Filtrar:</h2>
         <label for="data-inicial">Data-inicial:</label>
         <input type="date" name="data-inicial">
@@ -33,15 +33,11 @@
                         <h4 class="datas">Data Limite: {{ campanha['data_fim'] }}</h4>
                         <h4>Status: {{ campanha['status'] }}</h4>
 
-                        <div class="botoes">
-                                <form action="{{url_for('doador')}}" method="post">
-                                    <button class="butao" type="submit">Quero doar</button>
-                                </form>
-                            
-                                <form action="{{ url_for('editar', id=campanha['id']) }}" method="get" class="form-campanha">
+                        <div class="botoes">                   
+                                <form action="{{ url_for('campanha.editar', id=campanha['id']) }}" method="get" class="form-campanha">
                                     <button class="butao" type="submit">Editar</button>
                                 </form>
-                                <form action="{{ url_for('concluida', id=campanha['id']) }}" method="post" class="form-campanha">
+                                <form action="{{ url_for('campanha.concluida', id=campanha['id']) }}" method="post" class="form-campanha">
                                     <button class="butao" type="submit">Concluir</button>
                                 </form>
                         </div>

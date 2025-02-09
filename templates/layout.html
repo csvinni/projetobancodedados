@@ -10,16 +10,24 @@
 <body>
         <header class="cabecalho">
             <div class="inicio">
-                <a class="but-inicio" href="{{ url_for('index') }}" id="tit">ADCB</a>
+                {% if current_user.is_authenticated %}
+                    <a class="but-inicio" href="{{ url_for('auth.dashboard') }}" id="tit">ADCB</a>
+                {% else %}
+                    <a class="but-inicio" href="{{ url_for('index') }}" id="tit">ADCB</a>
+                {% endif %}
                 <h3>Administrador de Doações e Campanhas Beneficientes</h3>
             </div>
 
             <div class="infor">
-                <a class="butao" href="{{ url_for('doador') }}">Doadores</a>
-                <a class="butao" href="{{ url_for('listar_campanhas') }}">Campanhas</a>
-                <a class="butao" href="{{ url_for('listar_doacoes') }}">Ver doações</a>
-                <a class="butao" href="{{ url_for('campanhas') }}">Nova Campanha</a>
-                <a class="butao" href="{{ url_for('relatorios') }}">Relatórios</a>
+                <a class="butao" href="{{ url_for('doador.listar') }}">Doadores</a>
+                <a class="butao" href="{{ url_for('campanha.listar_campanhas') }}">Campanhas</a>
+                <a class="butao" href="{{ url_for('doacao.listar_doacoes') }}">Ver doações</a>
+                {% if current_user.is_authenticated %}
+                    <a class="butao" href="{{ url_for('doador.cadastrodoador') }}">cadastrar doador</a>
+                    <a class="butao" href="{{ url_for('campanha.campanhas') }}">Nova Campanha</a>
+                    <a class="butao" href="{{ url_for('doacao.itens_doacao') }}">Cadastrar doação</a>
+                    <a class="butao" href="{{ url_for('auth.logout') }}">Sair</a>
+                {% endif %}
             </div>
         </header>
 

@@ -1,47 +1,73 @@
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from sqlalchemy.exc import SQLAlchemyError
+from database.config import Session
+from models.models import Doador
+from flask_login import login_required
 
-@app.route('/doador', methods=['GET', 'POST'])
-def doador():
-    doador_id = None  # Inicialize a variável doador_id
+doador_bp = Blueprint('doador', __name__, template_folder='templates')
+session = Session()
 
-    # Inicialize o cursor fora do bloco POST
-    cursor = None
-
+@doador_bp.route('/cadastrodoador', methods=['GET', 'POST'])
+def cadastrodoador():
     if request.method == 'POST':
         nome = request.form.get('nome')
         telefone = request.form.get('telefone')
         email = request.form.get('email')
 
-        # Inserindo o doador
-        INSERT_D = 'INSERT INTO doadores(nome, email, telefone) VALUES (%s, %s, %s)'
-        
+        novo_doador = Doador(nome=nome, email=email, telefone=telefone)
+
         try:
-            cursor = conexao.connection.cursor()  # Criação do cursor
-            cursor.execute(INSERT_D, (nome, email, telefone)) 
-            conexao.connection.commit()  
-            doador_id = cursor.lastrowid  
-        except Exception as e:
-            print(f"An error occurred: {e}")  
-            conexao.connection.rollback()  
-        finally:
-            if cursor:  # Verifique se o cursor foi criado antes de fechá-lo
-                cursor.close()
+            session.add(novo_doador)
+            session.commit()
+            flash('Doador cadastrado com sucesso!')
+            return redirect(url_for('doacao.itens_doacao'))
+        except SQLAlchemyError:
+            session.rollback()
+            flash('Erro ao cadastrar doador. Tente novamente mais tarde.')
+    session.close()
+    return render_template('doador/cadastro_doador.html')
 
-        if doador_id is not None:  # Verifique se doador_id foi definido
-            return redirect(url_for('itens_doacao', doador_id=doador_id))
-        else:
-            return render_template('cadastro_doador.html')  # Mensagem de erro
-
-    # Para lidar com o GET, vamos buscar os doadores
+@doador_bp.route('/listar', methods=['GET'])
+@login_required
+def listar():
     try:
-        cursor = conexao.connection.cursor()  # Criação do cursor para a consulta
-        cursor.execute("SELECT id, nome FROM doadores")  # Consulta
-        doadores = cursor.fetchall()  # Obtenha os resultados
-    except Exception as e:
-        print(f"An error occurred while fetching doadores: {e}")
-        doadores = []
+        doadores = session.query(Doador).all()  
+        return render_template('doador/listar_doadores.html', doadores=doadores)
+    except SQLAlchemyError:
+        flash('Erro ao buscar doadores. Tente novamente mais tarde.')
+        return redirect(url_for('doacao.itens_doacao'))
     finally:
-        if cursor:  # Verifique se o cursor foi criado antes de fechá-lo
-            cursor.close()
+        session.close()
 
-    return render_template('listar_doadores.html', doadores=doadores)
+@doador_bp.route('/doador/edit/<int:doador_id>', methods=['GET', 'POST'])
+def editar_doador(doador_id):
+    session = Session()
+    doador = session.query(Doador).get(doador_id)
 
+    if request.method == 'POST':
+        doador.nome = request.form.get('nome')
+        doador.telefone = request.form.get('telefone')
+        doador.email = request.form.get('email')
+
+        try:
+            session.commit()
+            flash('Doador atualizado com sucesso!')
+            return redirect(url_for('doacao.itens_doacoes'))
+        except SQLAlchemyError:
+            session.rollback()
+            flash('Erro ao atualizar doador. Tente novamente mais tarde.')
+
+    session.close()
+    return render_template('doador/cadastro_doador.html', doador=doador)
+
+@doador_bp.route('/doador/<int:doador_id>', methods=['GET'])
+def detalhes_doador(doador_id):
+    session = Session()
+    doador = session.query(Doador).get(doador_id)
+    session.close()
+
+    if doador is None:
+        flash('Doador não encontrado.')
+        return redirect(url_for('doador.doador'))
+
+    return render_template('doador/cadastro_doador.html', doador=doador)

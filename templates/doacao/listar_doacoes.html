@@ -11,9 +11,6 @@
             <tr>
                 <th>Doador</th>
                 <th>Campanha</th>
-                <th>Categoria</th>
-                <th>Tipo de Doação</th>
-                <th>Quantidade de itens</th>
                 <th>Valor</th>
                 <th>Data da Doação</th>
             </tr>
@@ -23,10 +20,7 @@
                 <tr>
                     <td>{{ doacao.doador_nome }}</td>
                     <td>{{ doacao.campanha_titulo }}</td>
-                    <td>{{ doacao.categoria_nome }}</td>
-                    <td>{{ doacao.tipo_doacao }}</td>
-                    <td>{{ doacao.quantidade if doacao.tipo_doacao == 'itens' else '--' }}</td>
-                    <td>{{ doacao.valor if doacao.tipo_doacao == 'dinheiro' else '--' }}</td>
+                    <td>{{ doacao.valor}}</td>
                     <td>{{ doacao.data_doacao }}</td>
                 </tr>
             {% else %}
