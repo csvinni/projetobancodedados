@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from models.models import Admin
-from database.config import Session 
+from database.config import Session
+from werkzeug.security import check_password_hash
 
 auth_bp = Blueprint('auth', __name__, template_folder='templates')
 session = Session()
@@ -17,7 +18,7 @@ def login():
         email = request.form['email']
         senha = request.form['senha']
         admin = session.query(Admin).filter_by(email=email).first()
-        if admin and admin.senha == senha: 
+        if admin and admin.check_password(senha):
             login_user(admin)
             return redirect(url_for('auth.dashboard'))
         flash('Credenciais inválidas.')
@@ -31,7 +32,8 @@ def cadastro_admin():
         ong = request.form['ong']
         senha = request.form['senha']
 
-        novo_admin = Admin(nome=nome,email=email,senha=senha,ong=ong)
+        novo_admin = Admin(nome=nome, email=email, ong=ong)
+        novo_admin.set_password(senha) 
         session.add(novo_admin)
         session.commit()
 
@@ -44,9 +46,9 @@ def cadastro_admin():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('index'))
 
 @auth_bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('auth/indexadmin.html', nome=current_user.nome)
+    return render_template('auth/indexadmin.html', nome=current_user.ong)
