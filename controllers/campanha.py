@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from models.models import Doacao, Campanha
 from database.config import Session 
 from datetime import datetime
+from sqlalchemy import and_
 from sqlalchemy.exc import SQLAlchemyError
 
 campanha_bp = Blueprint('campanha', __name__, template_folder='templates')
@@ -45,16 +46,16 @@ def listar_campanhas():
     data_inicial = request.args.get('data-inicial')
     data_final = request.args.get('data-final')
 
-    query = session.query(Campanha)
-    
+    query = session.query(Campanha).filter_by(admin_id=current_user.id)
+
     if data_inicial and data_final:
-        query = query.filter(Campanha.data_inicio >= data_inicial, Campanha.data_fim <= data_final)
+        query = query.filter(and_(Campanha.data_inicio >= data_inicial, Campanha.data_fim <= data_final))
     elif data_inicial:
         query = query.filter(Campanha.data_inicio >= data_inicial)
     elif data_final:
         query = query.filter(Campanha.data_fim <= data_final)
+    campanhas = query.all()
 
-    campanhas = session.query(Campanha).filter_by(admin_id=current_user.id).all()
     return render_template('campanha/listar_campanhas.html', campanhas=campanhas)
 
 @campanha_bp.route('/relatorios', methods=['GET'])
@@ -96,9 +97,10 @@ def editar(id):
         campanha.titulo = request.form.get('titulo')
         campanha.descricao = request.form.get('descricao')
         campanha.meta_financeira = request.form.get('meta_financeira')
-        campanha.data_inicio = request.form.get('data_inicio')
-        campanha.data_fim = request.form.get('data_fim')
+        campanha.data_inicio = datetime.strptime(request.form.get('data_inicio'), '%Y-%m-%d').date()
+        campanha.data_fim = datetime.strptime(request.form.get('data_fim'), '%Y-%m-%d').date()
         campanha.status = request.form.get('status')
+
         
         session.commit()
         flash('Campanha atualizada com sucesso!')
