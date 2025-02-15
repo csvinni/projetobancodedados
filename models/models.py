@@ -1,8 +1,7 @@
-from sqlalchemy import Integer, Text, ForeignKey, Date, DECIMAL, Float
-from sqlalchemy.orm import relationship, declarative_base, Mapped, mapped_column
 from flask_login import UserMixin
 from datetime import date
 from database.config import Base
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Admin(UserMixin, Base):
     __tablename__ = 'admin'
@@ -15,6 +14,12 @@ class Admin(UserMixin, Base):
 
     campanhas: Mapped[list['Campanha']] = relationship('Campanha', back_populates='admin')
 
+    def set_password(self, password: str):
+        self.senha = generate_password_hash(password) 
+    def check_password(self, password: str) -> bool:
+        return check_password_hash(self.senha, password) 
+    def get_id(self):
+        return str(self.id)
 
 class Doador(Base):
     __tablename__ = 'doadores'
@@ -23,6 +28,9 @@ class Doador(Base):
     nome: Mapped[str] = mapped_column(Text, nullable=False)
     email: Mapped[str] = mapped_column(Text, nullable=False)
     telefone: Mapped[str] = mapped_column(Text, nullable=False)
+
+    admin_id: Mapped[int] = mapped_column(Integer, ForeignKey('admin.id'))  # Referência ao Admin
+    admin: Mapped['Admin'] = relationship('Admin')
 
     doacoes: Mapped[list['Doacao']] = relationship('Doacao', back_populates='doador')
 
