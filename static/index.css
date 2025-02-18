@@ -42,7 +42,7 @@ header a{
 
 .infor{
     display: flex;
-    width: 800px;
+    width: 980px;
     gap: 10px;
     align-items: center;
     justify-content: space-around;
@@ -52,7 +52,7 @@ header a{
 .infor .butao{
     display: flex;
     background-color: red;
-    width: 23%;
+    width: 25%;     
     align-items: center;
     justify-content: center;
     border-radius: 10px;
@@ -61,12 +61,12 @@ header a{
 .butao{
     display: flex;
     background-color: red;
-    width: 100px;
+    width: 10px;
     color: white;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    height: 30px;
+    height: 50px;
     border: none;
     
 }
@@ -88,7 +88,8 @@ header a{
     padding-top: 10px;
     height: 100%;
     display: flex;
-    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 .conteudo{
     margin-top: 20px;

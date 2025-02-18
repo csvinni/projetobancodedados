@@ -2,6 +2,8 @@ from flask_login import UserMixin
 from datetime import date
 from database.config import Base
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.orm import mapped_column, Mapped, relationship
+from  sqlalchemy import Text, Integer, ForeignKey, Date, Float
 
 class Admin(UserMixin, Base):
     __tablename__ = 'admin'
