@@ -1,0 +1,48 @@
+{% extends 'doador/layoutdoador.html' %}
+{% block title %} index {% endblock %}
+{% block content %}
+
+    <div class="conteudo">
+        <h1>Gerencie as Doações da Sua ONG</h1>
+        <p class="texto">
+          Bem-vindo ao painel de administração da sua ONG! Aqui você pode gerenciar as doações que fazem a diferença,
+          apoiando diretamente as causas que transformam vidas. Organize campanhas, registre doadores e acompanhe os
+          impactos das suas ações em tempo real. Cada campanha que você criar e cada doação registrada são passos 
+          essenciais para criar mudanças positivas. Use essa plataforma para otimizar a gestão das suas iniciativas
+           e garantir que sua ONG continue impactando positivamente a vida de quem mais precisa.
+        </p>
+
+
+        <div id="carouselExampleDark" class="carousel carousel-dark slide">
+            <div class="carousel-indicators">
+              <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+              <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+              <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner" style="height: 600px;" >
+              <div class="carousel-item active" data-bs-interval="10000">
+                <img src="/static/Onu-Africa.jpg"class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                </div>
+              </div>
+              <div class="carousel-item" data-bs-interval="2000">
+                <img src="/static/img1.webp" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="/static/palhoca-faz-campanha-para-arrecadar-racao-para-animais-de-rua.jpg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                </div>
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+{% endblock %}

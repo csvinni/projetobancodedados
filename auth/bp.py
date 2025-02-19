@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
-from models.models import Admin
+from models.models import Admin, Doador
 from database.config import Session
 from werkzeug.security import check_password_hash
 
@@ -10,18 +10,32 @@ login_manager = LoginManager()
 
 @login_manager.user_loader
 def load_user(user_id):
-    return session.query(Admin).get(int(user_id))  
+    user = session.query(Admin).get(int(user_id)) 
+    if user is None:
+        user = session.query(Doador).get(int(user_id))
+    return user
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
+
+@auth_bp.route('/login',methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
         senha = request.form['senha']
-        admin = session.query(Admin).filter_by(email=email).first()
-        if admin and admin.check_password(senha):
-            login_user(admin)
-            return redirect(url_for('auth.dashboard'))
-        flash('Credenciais inválidas.')
+        role = request.form.get('role')
+
+        if role == 'Admin':
+            admin = session.query(Admin).filter_by(email=email).first()
+
+            if admin and check_password_hash(admin.senha, senha):
+                login_user(admin)
+                return redirect(url_for('auth.dashboard'))
+
+        elif role == 'doador':
+            doador= session.query(Doador).filter_by(email=email).first()
+            if doador and check_password_hash(doador.senha, senha):
+                login_user(doador)
+                return redirect(url_for('doador.indexdoador'))    
+
     return render_template('auth/login.html')
 
 @auth_bp.route('/cadastro_admin', methods=['GET', 'POST'])

@@ -7,7 +7,8 @@
     <h1>Bem-vindo ao ADCB</h1>
     <p>Escolha uma das opções abaixo:</p>
     <div class="d-flex justify-content-center">
-        <a href="{{ url_for('auth.cadastro_admin') }}" class="btn btn-primary mx-2">Cadastrar</a>
+        <a href="{{ url_for('auth.cadastro_admin') }}" class="btn btn-primary mx-2">Cadastrar-se como admin</a>
+        <a href="{{ url_for('doador.cadastrodoador') }}" class="btn btn-primary mx-2">Cadastrar-se como doador</a>
         <a href="{{ url_for('auth.login') }}" class="btn btn-success mx-2">Login</a>
     </div>
 </div>

@@ -23,18 +23,23 @@ class Admin(UserMixin, Base):
     def get_id(self):
         return str(self.id)
 
-class Doador(Base):
+class Doador(UserMixin,Base):
     __tablename__ = 'doadores'
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     nome: Mapped[str] = mapped_column(Text, nullable=False)
     email: Mapped[str] = mapped_column(Text, nullable=False)
+    senha: Mapped[str] = mapped_column(Text, nullable=False)
     telefone: Mapped[str] = mapped_column(Text, nullable=False)
 
-    admin_id: Mapped[int] = mapped_column(Integer, ForeignKey('admin.id'))  # Referência ao Admin
-    admin: Mapped['Admin'] = relationship('Admin')
-
     doacoes: Mapped[list['Doacao']] = relationship('Doacao', back_populates='doador')
+
+    def set_password(self, password: str):
+        self.senha = generate_password_hash(password) 
+    def check_password(self, password: str) -> bool:
+        return check_password_hash(self.senha, password) 
+    def get_id(self):
+        return str(self.id)
 
 
 class Campanha(Base):
