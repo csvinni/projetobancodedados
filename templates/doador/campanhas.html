@@ -1,0 +1,50 @@
+{% extends 'doador/layoutdoador.html' %}
+
+{% block title %}Campanhas{% endblock %}
+
+{% block content %}
+
+<div class="lista-c">
+    <h2>Lista de Campanhas</h2>
+
+    <h2 class="tarefas">Tarefas da Categoria {{ categoria_id }}</h2>  <!-- Exibe a categoria -->
+
+    <form method="GET" action="{{url_for('doador.campanhas')}}">
+        <h2>Filtrar:</h2>
+        <label for="data-inicial">Data-inicial:</label>
+        <input type="date" name="data-inicial">
+        <label for="data-final">Data-final:</label>
+        <input type="date" name="data-final">
+        
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <div class="campanhas-c">
+
+         {% if campanhas %}
+            {% for campanha in campanhas %}
+                <div class="bloquinho_campanha">
+                    <div class="info-campanha">
+                        <h3 id="titulo-c">{{ campanha['titulo'] }}</h3>
+                        <h4>Descrição: {{ campanha['descricao'] }}</h4>
+                        <h4>Meta financeira: R$ {{ campanha['meta_financeira'] }}</h4>
+                        <h4>Meta itens: {{ campanha['meta_itens'] }}</h4>
+                        <h4 class="datas">Data Inicial: {{ campanha['data_inicio'] }}</h4>
+                        <h4 class="datas">Data Limite: {{ campanha['data_fim'] }}</h4>
+                        <h4>Status: {{ campanha['status'] }}</h4>
+
+                        <div class="botoes">                   
+                             <button><a class="butao" href="{{ url_for('doador.itens_doacao') }}" class="butao" type="submit">Doar</button>
+                        </div>
+                    </div>
+                   
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Nenhuma campanha encontrada.</p>
+        {% endif %}
+    </div>
+       
+</div>
+
+{% endblock %}

@@ -16,19 +16,13 @@ def itens_doacao():
     if request.method == 'POST':
         print("Dados recebidos:", request.form)  # Para depuração
 
-        id_doador = request.form.get('id_doador')
         id_campanha = request.form.get('id_campanha')
         valor = request.form.get('valor')
         data_doacao = request.form.get('data_doacao')
         data_doacao = datetime.strptime(data_doacao, '%Y-%m-%d').date()
 
-        # Validar se os campos obrigatórios estão preenchidos
-        if not id_doador or not id_campanha or not valor or not data_doacao:
-            flash('Todos os campos obrigatórios devem ser preenchidos.')
-            return redirect(url_for('doacao.itens_doacao'))
-
         nova_doacao = Doacao(
-            id_doador=int(id_doador),
+            id_doador=current_user.id,
             id_campanha=int(id_campanha),
             valor=float(valor),
             data_doacao=data_doacao
@@ -37,8 +31,6 @@ def itens_doacao():
         try:
             session.add(nova_doacao)
             session.commit()
-            flash('Doação registrada com sucesso!')
-            return redirect(url_for('doacao.listar_doacoes'))
         except SQLAlchemyError as e:
             session.rollback()
             print(f"Erro ao registrar a doação: {e}")  # Para depuração
@@ -47,10 +39,9 @@ def itens_doacao():
         finally:
             session.close()  
 
-    doadores = session.query(Doador).all()
     campanhas = session.query(Campanha).all()
     session.close()  
-    return render_template('doacao/cadastro_itens_doacoes.html', doadores=doadores, campanhas=campanhas)
+    return render_template('doacao/cadastro_itens_doacao.html', campanhas=campanhas)
 
 @doacao_bp.route('/listar_doacoes', methods=['GET'])
 @login_required

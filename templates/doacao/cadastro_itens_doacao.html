@@ -1,0 +1,29 @@
+{% extends 'doador/layoutdoador.html' %}
+{% block content %}
+
+<form action="{{ url_for('doacao.itens_doacao') }}" method="POST" class="formulario_doacao">
+
+    <div class="mb-3">
+        <label for="campanha_id" class="form-label">Campanha</label>
+        <select name="id_campanha" class="form-control" required>
+            <option value="">---</option>
+            {% for campanha in campanhas %}
+                <option value="{{ campanha.id }}">{{ campanha.titulo }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="valor" class="form-label">Valor em Dinheiro</label>
+        <input type="number" name="valor" class="form-control" placeholder="Valor em R$" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="data_doacao" class="form-label">Data da Doação</label>
+        <input type="date" name="data_doacao" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="background-color: red; border: none;">Doar</button>
+</form>
+
+{% endblock %}

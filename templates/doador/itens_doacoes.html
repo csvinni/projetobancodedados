@@ -1,16 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<form action="{{ url_for('doacao.itens_doacao') }}" method="POST" class="formulario_doacao">
-    <div class="mb-3">
-        <label for="doador_id" class="form-label">Doador</label>
-        <select name="id_doador" class="form-control" required>
-            <option value="">---</option>
-            {% for doador in doadores %}
-                <option value="{{ doador.id }}">{{ doador.nome }}</option>
-            {% endfor %}
-        </select>
-    </div>
+<form action="{{ url_for('doador.itens_doacao') }}" method="POST" class="formulario_doacao">
 
     <div class="mb-3">
         <label for="campanha_id" class="form-label">Campanha</label>

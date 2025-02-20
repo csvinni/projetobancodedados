@@ -17,17 +17,14 @@
                 {% endif %}
                 <h3>Administrador de Doações e Campanhas Beneficientes</h3>
             </div>
-
             <div class="infor">
                 {% if current_user.is_authenticated %}
-                    <a class="butao" href="{{ url_for('doador.listar') }}">Doadores</a>
                     <a class="butao" href="{{ url_for('campanha.listar_campanhas') }}">Campanhas</a>
                     <a class="butao" href="{{ url_for('doacao.listar_doacoes') }}">Ver doações</a>
-                    <a class="butao" href="{{ url_for('doador.cadastrodoador') }}">cadastrar doador</a>
                     <a class="butao" href="{{ url_for('campanha.campanhas') }}">Nova Campanha</a>
-                    <a class="butao" href="{{ url_for('doacao.itens_doacao') }}">Cadastrar doação</a>
                     <a class="butao" href="{{ url_for('auth.logout') }}">Sair</a>
                 {% endif %}
+                
             </div>
         </header>
 

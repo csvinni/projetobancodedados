@@ -11,7 +11,7 @@
         <header class="cabecalho">
             <div class="inicio">
                 {% if current_user.is_authenticated %}
-                    <a class="but-inicio" href="{{ url_for('auth.dashboard') }}" id="tit">ADCB</a>
+                    <a class="but-inicio" href="{{ url_for('doador.indexdoador') }}" id="tit">ADCB</a>
                 {% else %}
                     <a class="but-inicio" href="{{ url_for('index') }}" id="tit">ADCB</a>
                 {% endif %}

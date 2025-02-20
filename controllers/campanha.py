@@ -58,20 +58,6 @@ def listar_campanhas():
 
     return render_template('campanha/listar_campanhas.html', campanhas=campanhas)
 
-@campanha_bp.route('/relatorios', methods=['GET'])
-@login_required
-def relatorios():
-    data_inicial = request.args.get('data-inicial')
-    data_final = request.args.get('data-final')
-
-    query = session.query(Doacao).join(Campanha).filter(Campanha.data_inicio >= data_inicial, Campanha.data_fim <= data_final)
-    total_arrecadado = query.with_entities(func.sum(Doacao.valor)).scalar() or 0
-
-    query_top_donors = session.query(Doador.nome,func.sum(Doacao.valor).label('total_doacao')).join(Doacao).group_by(Doador.nome).order_by(desc('total_doacao')).limit(10)
-    top_donors = query_top_donors.all()
-
-    return render_template('campanha/relatorios.html', total=total_arrecadado, top_donors=top_donors)
-
 @campanha_bp.route('/concluida/<int:id>', methods=['POST'])
 @login_required
 def concluida(id):
