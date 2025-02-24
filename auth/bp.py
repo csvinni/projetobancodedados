@@ -15,8 +15,13 @@ def load_user(user_id):
         user = session.query(Doador).get(int(user_id))
     return user
 
+@auth_bp.route('/indexadmin')
+@login_required
+def indexadmin():
+    return render_template('auth/indexadmin.html')
 
-@auth_bp.route('/login',methods=['GET', 'POST'])
+
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
@@ -25,18 +30,19 @@ def login():
 
         if role == 'Admin':
             admin = session.query(Admin).filter_by(email=email).first()
-
             if admin and check_password_hash(admin.senha, senha):
                 login_user(admin)
-                return redirect(url_for('auth.dashboard'))
+                return redirect(url_for('auth.indexadmin'))  # Redireciona para a lista de campanhas do admin
 
         elif role == 'doador':
-            doador= session.query(Doador).filter_by(email=email).first()
+            doador = session.query(Doador).filter_by(email=email).first()
             if doador and check_password_hash(doador.senha, senha):
                 login_user(doador)
-                return redirect(url_for('doador.indexdoador'))    
+                return redirect(url_for('doador.indexdoador'))  # Agora redireciona corretamente
 
     return render_template('auth/login.html')
+
+
 
 @auth_bp.route('/cadastro_admin', methods=['GET', 'POST'])
 def cadastro_admin():
@@ -47,7 +53,7 @@ def cadastro_admin():
         senha = request.form['senha']
 
         novo_admin = Admin(nome=nome, email=email, ong=ong)
-        novo_admin.set_password(senha) 
+        novo_admin.set_password(senha)  # Certifique-se de que set_password está funcionando corretamente
         session.add(novo_admin)
         session.commit()
 

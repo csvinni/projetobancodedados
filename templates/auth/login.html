@@ -4,24 +4,26 @@
 
 
 <div class="area-cadastro">
-    <h2> Faça seu login </h2>
+    <h1> Faça seu login </h1>
     <form class="formulario" action="{{ url_for('auth.login') }}" method="post">
     
         <div class="mb-3">
             <label for="email" class="form-label">E-mail:</label>
-            <input type="email" name="email" class="form-control" placeholder="Email" required>
+            <input type="email" name="email" class="form-control" required>
         </div>
         <div class="mb-3">
             <label for="senha" class="form-label">Senha:</label>
-            <input type="password" name="senha" class="form-control" placeholder="Senha" required>
+            <input type="password" name="senha" class="form-control"  required>
         </div>
 
             <label for="role">Login como:</label>
-            <select name="role" id="role">
+            <select name="role" id="role" style = ' width: 150px;
+    height: 30px;'>
+                <option value="doador">---</option>
                 <option value="doador">Doador</option>
                 <option value="Admin">Admin</option>
             </select>
-        <button type="submit" class="btn btn-primary">Entrar</button>
+        <button type="submit" class="btn btn-primary" style = 'margin-top: 20px'>Entrar</button>
     </form>
 </div>
 

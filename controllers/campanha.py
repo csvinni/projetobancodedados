@@ -46,7 +46,12 @@ def listar_campanhas():
     data_inicial = request.args.get('data-inicial')
     data_final = request.args.get('data-final')
 
-    query = session.query(Campanha).filter_by(admin_id=current_user.id)
+    if current_user.is_admin():
+        # Administrador: retorna todas as campanhas
+        query = session.query(Campanha)
+    else:
+        # Doador: retorna campanhas associadas ao doador
+        query = session.query(Campanha).filter_by(admin_id=current_user.id)
 
     if data_inicial and data_final:
         query = query.filter(and_(Campanha.data_inicio >= data_inicial, Campanha.data_fim <= data_final))
@@ -54,9 +59,22 @@ def listar_campanhas():
         query = query.filter(Campanha.data_inicio >= data_inicial)
     elif data_final:
         query = query.filter(Campanha.data_fim <= data_final)
+
     campanhas = query.all()
 
-    return render_template('campanha/listar_campanhas.html', campanhas=campanhas)
+    # Renderiza o template baseado no tipo de usuário
+    if current_user.is_admin():
+        return render_template('campanha/listar_campanhas.html', campanhas=campanhas)
+    else:
+        return render_template('campanha/listar_campanhas_doador.html', campanhas=campanhas)
+    
+@campanha_bp.route('/listar_campanhas_doador', methods=['GET'])
+@login_required
+def listar_campanhas_doador():
+    # Filtra as campanhas ativas
+    campanhas = session.query(Campanha).filter_by(status='ativa').all()
+    
+    return render_template('campanha/listar_campanhas_doador.html', campanhas=campanhas)
 
 @campanha_bp.route('/concluida/<int:id>', methods=['POST'])
 @login_required
@@ -93,3 +111,20 @@ def editar(id):
         return redirect(url_for('campanha.listar_campanhas'))
 
     return render_template('campanha/editar_campanha.html', campanha=campanha)
+
+@campanha_bp.route('/excluir/<int:id>', methods=['POST'])
+@login_required
+def excluir(id):
+    campanha = session.query(Campanha).filter_by(id=id).first()
+    if campanha:
+        # Excluir doações associadas
+        doacoes = session.query(Doacao).filter_by(id_campanha=id).all()
+        for doacao in doacoes:
+            session.delete(doacao)
+        session.delete(campanha)
+        session.commit()
+        flash('Campanha e doações associadas excluídas com sucesso!', 'success')
+    else:
+        flash('Campanha não encontrada.', 'error')
+
+    return redirect(url_for('campanha.listar_campanhas'))

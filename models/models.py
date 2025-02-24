@@ -4,6 +4,8 @@ from database.config import Base
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from  sqlalchemy import Text, Integer, ForeignKey, Date, Float
+# importei isso 
+from typing import List
 
 class Admin(UserMixin, Base):
     __tablename__ = 'admin'
@@ -13,8 +15,12 @@ class Admin(UserMixin, Base):
     email: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     senha: Mapped[str] = mapped_column(Text, nullable=False)
     ong: Mapped[str] = mapped_column(Text, nullable=False)
+#modifiquei essa duas linhas 
+    from typing import List
 
-    campanhas: Mapped[list['Campanha']] = relationship('Campanha', back_populates='admin')
+    campanhas: Mapped[List['Campanha']] = relationship('Campanha', back_populates='admin')
+    def is_admin(self):
+        return True 
 
     def set_password(self, password: str):
         self.senha = generate_password_hash(password) 
@@ -22,6 +28,7 @@ class Admin(UserMixin, Base):
         return check_password_hash(self.senha, password) 
     def get_id(self):
         return str(self.id)
+    
 
 class Doador(UserMixin,Base):
     __tablename__ = 'doadores'
@@ -32,7 +39,12 @@ class Doador(UserMixin,Base):
     senha: Mapped[str] = mapped_column(Text, nullable=False)
     telefone: Mapped[str] = mapped_column(Text, nullable=False)
 
-    doacoes: Mapped[list['Doacao']] = relationship('Doacao', back_populates='doador')
+
+    #doacoes: Mapped[list['Doacao']] = relationship('Doacao', back_populates='doador')
+    
+    doacoes: Mapped[List['Doacao']] = relationship('Doacao', back_populates='doador')
+    def is_admin(self):
+        return False
 
     def set_password(self, password: str):
         self.senha = generate_password_hash(password) 
@@ -40,6 +52,7 @@ class Doador(UserMixin,Base):
         return check_password_hash(self.senha, password) 
     def get_id(self):
         return str(self.id)
+    
 
 
 class Campanha(Base):
@@ -55,7 +68,9 @@ class Campanha(Base):
 
     admin_id: Mapped[int] = mapped_column(Integer, ForeignKey('admin.id'))
     admin: Mapped['Admin'] = relationship('Admin', back_populates='campanhas')
-    doacoes: Mapped[list['Doacao']] = relationship('Doacao', back_populates='campanha')
+    #doacoes: Mapped[list['Doacao']] = relationship('Doacao', back_populates='campanha')
+    doacoes: Mapped[List['Doacao']] = relationship('Doacao', back_populates='campanha')
+    
 
 class Doacao(Base):
     __tablename__ = 'doacoes'

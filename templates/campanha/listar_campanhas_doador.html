@@ -1,0 +1,33 @@
+{% extends 'doador/layoutdoador.html' %}
+
+{% block title %}Lista de Campanhas - Doador{% endblock %}
+
+{% block content %}
+<body>
+    <h2>Lista de Campanhas</h2>
+    <div class="lista-c">
+       
+    
+        <div class="campanhas-c">
+             {% if campanhas %}
+                {% for campanha in campanhas %}
+                    <div class="bloquinho_campanha">
+                        <div class="info-campanha">
+                            <h3 id="titulo-c">{{ campanha['titulo'] }}</h3>
+                            <h4>Descrição: {{ campanha['descricao'] }}</h4>
+                            <h4>Meta financeira: R$ {{ campanha['meta_financeira'] }}</h4>
+                            <h4>Meta itens: {{ campanha['meta_itens'] }}</h4>
+                            <h4 class="datas">Data Inicial: {{ campanha['data_inicio'] }}</h4>
+                            <h4 class="datas">Data Limite: {{ campanha['data_fim'] }}</h4>
+                            <h4>Status: {{ campanha['status'] }}</h4>
+
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Nenhuma campanha encontrada.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+{% endblock %}
