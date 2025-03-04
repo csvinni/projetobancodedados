@@ -1,8 +1,7 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker,DeclarativeBase
 
-engine = create_engine('sqlite:///ong.db')
-Session = sessionmaker(bind=engine)
 
-class Base(DeclarativeBase):
-    pass
+# Defina as configurações do MySQL
+MYSQL_USER = 'root'  
+MYSQL_PASSWORD = '1234'  
+MYSQL_HOST = 'localhost'
+MYSQL_DB = 'db_banco' 

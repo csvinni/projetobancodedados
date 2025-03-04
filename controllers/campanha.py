@@ -1,13 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models.models import Doacao, Campanha
-from database.config import Session 
+from flask_mysqldb import MySQL
+from database import mysql  # Certifique-se de ter inicializado o MySQL aqui
 from datetime import datetime
-from sqlalchemy import and_
-from sqlalchemy.exc import SQLAlchemyError
+
 
 campanha_bp = Blueprint('campanha', __name__, template_folder='templates')
-session = Session()
 
 @campanha_bp.route('/campanhas', methods=['GET', 'POST'])
 @login_required
@@ -23,18 +21,12 @@ def campanhas():
         data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d').date()
         data_fim = datetime.strptime(data_fim, '%Y-%m-%d').date()
 
-        nova_campanha = Campanha(
-            titulo=titulo,
-            descricao=descricao,
-            meta_financeira=meta_financeira,
-            data_inicio=data_inicio,
-            data_fim=data_fim,
-            status=status,
-            admin_id=current_user.id
-        )
-
-        session.add(nova_campanha)
-        session.commit()
+        cursor = mysql.connection.cursor()
+        cursor.execute("INSERT INTO campanhas (titulo, descricao, meta_financeira, data_inicio, data_fim, status, admin_id) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
+                       (titulo, descricao, meta_financeira, data_inicio, data_fim, status, current_user.id))
+        mysql.connection.commit()
+        cursor.close()
+        
         flash('Campanha criada com sucesso!')
         return redirect(url_for('campanha.listar_campanhas'))
 
@@ -46,67 +38,61 @@ def listar_campanhas():
     data_inicial = request.args.get('data-inicial')
     data_final = request.args.get('data-final')
 
+    cursor = mysql.connection.cursor()
+    
     if current_user.is_admin():
         # Administrador: retorna todas as campanhas
-        query = session.query(Campanha)
+        cursor.execute("SELECT * FROM campanhas")
     else:
         # Doador: retorna campanhas associadas ao doador
-        query = session.query(Campanha).filter_by(admin_id=current_user.id)
+        cursor.execute("SELECT * FROM campanhas WHERE admin_id = %s", (current_user.id,))
+
+    campanhas = cursor.fetchall()
 
     if data_inicial and data_final:
-        query = query.filter(and_(Campanha.data_inicio >= data_inicial, Campanha.data_fim <= data_final))
+        campanhas = [campanha for campanha in campanhas if campanha[4] >= data_inicial and campanha[5] <= data_final]  # Ajuste os índices conforme necessário
     elif data_inicial:
-        query = query.filter(Campanha.data_inicio >= data_inicial)
+        campanhas = [campanha for campanha in campanhas if campanha[4] >= data_inicial]
     elif data_final:
-        query = query.filter(Campanha.data_fim <= data_final)
+        campanhas = [campanha for campanha in campanhas if campanha[5] <= data_final]
 
-    campanhas = query.all()
+    cursor.close()
 
     # Renderiza o template baseado no tipo de usuário
     if current_user.is_admin():
         return render_template('campanha/listar_campanhas.html', campanhas=campanhas)
     else:
         return render_template('campanha/listar_campanhas_doador.html', campanhas=campanhas)
-    
-@campanha_bp.route('/listar_campanhas_doador', methods=['GET'])
-@login_required
-def listar_campanhas_doador():
-    # Filtra as campanhas ativas
-    campanhas = session.query(Campanha).filter_by(status='ativa').all()
-    
-    return render_template('campanha/listar_campanhas_doador.html', campanhas=campanhas)
-
-@campanha_bp.route('/concluida/<int:id>', methods=['POST'])
-@login_required
-def concluida(id):
-    campanha = session.get(Campanha, id)
-    if campanha:
-        campanha.status = 'Concluída'
-        session.commit()
-        flash('Campanha concluída com sucesso!')
-    else:
-        flash('Campanha não encontrada.')
-    
-    return redirect(url_for('campanha.listar_campanhas'))
 
 @campanha_bp.route('/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editar(id):
-    campanha = session.get(Campanha, id)
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM campanhas WHERE id = %s", (id,))
+    campanha = cursor.fetchone()
+    cursor.close()
+
     if not campanha:
         flash('Campanha não encontrada.')
         return redirect(url_for('campanha.listar_campanhas'))
 
     if request.method == 'POST':
-        campanha.titulo = request.form.get('titulo')
-        campanha.descricao = request.form.get('descricao')
-        campanha.meta_financeira = request.form.get('meta_financeira')
-        campanha.data_inicio = datetime.strptime(request.form.get('data_inicio'), '%Y-%m-%d').date()
-        campanha.data_fim = datetime.strptime(request.form.get('data_fim'), '%Y-%m-%d').date()
-        campanha.status = request.form.get('status')
+        titulo = request.form.get('titulo')
+        descricao = request.form.get('descricao')
+        meta_financeira = request.form.get('meta_financeira')
+        data_inicio = request.form.get('data_inicio')
+        data_fim = request.form.get('data_fim')
+        status = request.form.get('status')
 
+        data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+        data_fim = datetime.strptime(data_fim, '%Y-%m-%d').date()
+
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE campanhas SET titulo = %s, descricao = %s, meta_financeira = %s, data_inicio = %s, data_fim = %s, status = %s WHERE id = %s", 
+                       (titulo, descricao, meta_financeira, data_inicio, data_fim, status, id))
+        mysql.connection.commit()
+        cursor.close()
         
-        session.commit()
         flash('Campanha atualizada com sucesso!')
         return redirect(url_for('campanha.listar_campanhas'))
 
@@ -115,16 +101,15 @@ def editar(id):
 @campanha_bp.route('/excluir/<int:id>', methods=['POST'])
 @login_required
 def excluir(id):
-    campanha = session.query(Campanha).filter_by(id=id).first()
-    if campanha:
-        # Excluir doações associadas
-        doacoes = session.query(Doacao).filter_by(id_campanha=id).all()
-        for doacao in doacoes:
-            session.delete(doacao)
-        session.delete(campanha)
-        session.commit()
-        flash('Campanha e doações associadas excluídas com sucesso!', 'success')
-    else:
-        flash('Campanha não encontrada.', 'error')
+    cursor = mysql.connection.cursor()
+    
+    # Excluir doações associadas
+    cursor.execute("DELETE FROM doacoes WHERE id_campanha = %s", (id,))
+    
+    # Excluir a campanha
+    cursor.execute("DELETE FROM campanhas WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cursor.close()
 
+    flash('Campanha e doações associadas excluídas com sucesso!', 'success')
     return redirect(url_for('campanha.listar_campanhas'))

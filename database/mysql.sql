@@ -1,22 +1,22 @@
 CREATE DATABASE IF NOT EXISTS `db_banco`;
 USE `db_banco`;
 
-CREATE TABLE admin (
+CREATE TABLE IF NOT EXISTS admin (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nome TEXT NOT NULL, 
     email TEXT NOT NULL,
     senha TEXT NOT NULL,
-    ong TEXT NOT NULL,
+    ong TEXT NOT NULL
 );
 
-CREATE TABLE doadores (
+CREATE TABLE IF NOT EXISTS doadores (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nome TEXT NOT NULL, 
     email TEXT NOT NULL,
     telefone TEXT NOT NULL
 );
 
-CREATE TABLE campanhas (
+CREATE TABLE IF NOT EXISTS campanhas (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     titulo TEXT NOT NULL, 
     descricao TEXT NOT NULL, 
@@ -27,12 +27,12 @@ CREATE TABLE campanhas (
     data_fim DATE
 );
 
-CREATE TABLE categorias (
+CREATE TABLE IF NOT EXISTS categorias (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nome TEXT NOT NULL
 );
 
-CREATE TABLE doacoes (
+CREATE TABLE IF NOT EXISTS doacoes (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_doador INT NOT NULL,
     id_campanha INT NOT NULL,
@@ -45,9 +45,7 @@ CREATE TABLE doacoes (
     FOREIGN KEY (id_campanha) REFERENCES campanhas(id)
 );
 
-
-
-CREATE TABLE relatorios (
+CREATE TABLE IF NOT EXISTS relatorios (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_campanha INT,
     data_referencia DATE,

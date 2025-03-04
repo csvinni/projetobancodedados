@@ -1,19 +1,15 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from sqlalchemy.exc import SQLAlchemyError
-from database.config import Session
-from models.models import Doador, Doacao, Campanha
+from flask_mysqldb import MySQL
 from datetime import datetime
 from flask_login import login_required, current_user
-from sqlalchemy import and_
+from database import mysql  # Certifique-se de ter inicializado o MySQL aqui
 
 doador_bp = Blueprint('doador', __name__, template_folder='templates')
-session = Session()
 
 @doador_bp.route('/indexdoador')
 @login_required
 def indexdoador():
     return render_template('doador/indexdoador.html')
-
 
 @doador_bp.route('/cadastrodoador', methods=['GET', 'POST'])
 def cadastrodoador():
@@ -23,26 +19,24 @@ def cadastrodoador():
         email = request.form.get('email')
         senha = request.form.get('senha')
 
-        novo_doador = Doador(nome=nome, email=email, telefone=telefone)
-        novo_doador.set_password(senha) 
-
+        cursor = mysql.connection.cursor()
         try:
-            session.add(novo_doador)
-            session.commit()
+            cursor.execute("INSERT INTO doadores (nome, email, telefone, senha) VALUES (%s, %s, %s, %s)", 
+                           (nome, email, telefone, generate_password_hash(senha)))  # Use hash para a senha
+            mysql.connection.commit()
             flash('Doador cadastrado com sucesso!')
             return redirect(url_for('auth.login'))
-        except SQLAlchemyError:
-            session.rollback()
-            flash('Erro ao cadastrar doador. Tente novamente mais tarde.')
-    session.close()
-    return render_template('doador/cadastro_doador.html')
-
+        except Exception as e:
+            mysql.connection.rollback()
+            flash(f'Erro ao cadastrar doador: {e}. Tente novamente mais tarde.')
+        finally:
+            cursor.close()
+    
+    return render_template('doador/cadastro_dador.html')
 
 @doador_bp.route('/itens_doacao', methods=['GET', 'POST'])
 @login_required
 def itens_doacao():
-    session = Session()
-
     if request.method == 'POST':
         print("Dados recebidos:", request.form) 
 
@@ -51,28 +45,35 @@ def itens_doacao():
         data_doacao = request.form.get('data_doacao')
         data_doacao = datetime.strptime(data_doacao, '%Y-%m-%d').date()
 
-        nova_doacao = Doacao(
-            id_doador=current_user.id,
-            id_campanha=int(id_campanha),
-            valor=float(valor),
-            data_doacao=data_doacao
-        )
-        session.add(nova_doacao)
-        session.close()  
+        cursor = mysql.connection.cursor()
+        try:
+            cursor.execute("INSERT INTO doacoes (id_doador, id_campanha, valor, data_doacao) VALUES (%s, %s, %s, %s)", 
+                           (current_user.id, int(id_campanha), float(valor), data_doacao))
+            mysql.connection.commit()
+            flash('Doação registrada com sucesso!')
+        except Exception as e:
+            mysql.connection.rollback()
+            print(f"Erro ao registrar a doação: {e}")  # Para depuração
+            flash('Erro ao registrar a doação. Tente novamente mais tarde.')
+        finally:
+            cursor.close()
 
-    campanhas = session.query(Campanha).all()
-    session.close()  
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM campanhas")  # Ajuste conforme o nome real da tabela
+    campanhas = cursor.fetchall()
+    cursor.close()  
     return render_template('doador/itens_doacoes.html', campanhas=campanhas)
-
 
 @doador_bp.route('/listar', methods=['GET'])
 @login_required
 def listar():
+    cursor = mysql.connection.cursor()
     try:
-        doadores = session.query(Doador).filter_by(admin_id=current_user.id).all()
+        cursor.execute("SELECT * FROM doadores WHERE admin_id = %s", (current_user.id,))
+        doadores = cursor.fetchall()
         return render_template('doador/listar_doadores.html', doadores=doadores)
-    except SQLAlchemyError:
-        flash('Erro ao buscar doadores. Tente novamente mais tarde.')
-        return redirect(url_for('doacao.itens_doacao'))
+    except Exception as e:
+        flash(f'Erro ao buscar doadores: {e}. Tente novamente mais tarde.')
+        return redirect(url_for('doador.indexdoador'))
     finally:
-        session.close()
+        cursor.close()

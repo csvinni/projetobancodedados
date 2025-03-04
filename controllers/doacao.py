@@ -1,18 +1,14 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models.models import Doacao, Doador, Campanha
-from database.config import Session 
+from flask_mysqldb import MySQL
 from datetime import datetime
-from sqlalchemy.exc import SQLAlchemyError
+from database import mysql  # Certifique-se de ter inicializado o MySQL aqui
 
 doacao_bp = Blueprint('doacao', __name__, template_folder='templates')
-session = Session()
 
 @doacao_bp.route('/itens_doacao', methods=['GET', 'POST'])
 @login_required
 def itens_doacao():
-    session = Session()
-
     if request.method == 'POST':
         print("Dados recebidos:", request.form)  # Para depuração
 
@@ -21,42 +17,45 @@ def itens_doacao():
         data_doacao = request.form.get('data_doacao')
         data_doacao = datetime.strptime(data_doacao, '%Y-%m-%d').date()
 
-        nova_doacao = Doacao(
-            id_doador=current_user.id,
-            id_campanha=int(id_campanha),
-            valor=float(valor),
-            data_doacao=data_doacao
-        )
-
+        cursor = mysql.connection.cursor()
+        
         try:
-            session.add(nova_doacao)
-            session.commit()
-        except SQLAlchemyError as e:
-            session.rollback()
+            cursor.execute("INSERT INTO doacoes (id_doador, id_campanha, valor, data_doacao) VALUES (%s, %s, %s, %s)", 
+                           (current_user.id, int(id_campanha), float(valor), data_doacao))
+            mysql.connection.commit()
+            flash('Doação registrada com sucesso!')
+        except Exception as e:
+            mysql.connection.rollback()
             print(f"Erro ao registrar a doação: {e}")  # Para depuração
             flash('Erro ao registrar a doação. Tente novamente mais tarde.')
             return redirect(url_for('doacao.itens_doacao'))
         finally:
-            session.close()  
+            cursor.close()  
 
-    campanhas = session.query(Campanha).all()
-    session.close()  
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM campanhas")  # Ajuste conforme o nome real da tabela
+    campanhas = cursor.fetchall()
+    cursor.close()  
     return render_template('doacao/cadastro_itens_doacao.html', campanhas=campanhas)
 
 @doacao_bp.route('/listar_doacoes', methods=['GET'])
 @login_required
 def listar_doacoes():
-    doacoes = (
-        session.query(
-            Doacao.valor,  # Pegando o valor da doação
-            Doacao.data_doacao,  # Pegando a data da doação
-            Doador.nome.label('doador_nome'),
-            Campanha.titulo.label('campanha_titulo')
-        )
-        .join(Doador, Doacao.id_doador == Doador.id)
-        .join(Campanha, Doacao.id_campanha == Campanha.id)
-        .filter(Campanha.admin_id == current_user.id)  # Filtra por admin logado
-        .all())
-
-    session.close() 
+    cursor = mysql.connection.cursor()
+    
+    cursor.execute("""
+        SELECT 
+            doacoes.valor, 
+            doacoes.data_doacao, 
+            doadores.nome AS doador_nome, 
+            campanhas.titulo AS campanha_titulo 
+        FROM doacoes 
+        JOIN doadores ON doacoes.id_doador = doadores.id 
+        JOIN campanhas ON doacoes.id_campanha = campanhas.id 
+        WHERE campanhas.admin_id = %s
+    """, (current_user.id,))
+    
+    doacoes = cursor.fetchall()
+    cursor.close() 
+    
     return render_template('doacao/listar_doacoes.html', doacoes=doacoes)
