@@ -24,9 +24,14 @@ CREATE TABLE IF NOT EXISTS campanhas (
     meta_financeira TEXT NOT NULL, 
     meta_itens TEXT NOT NULL, 
     data_inicio DATE,
+    data_fim DATE,
     status TEXT NOT NULL,
-    data_fim DATE
+    admin_id INT NOT NULL,
+    doador_id INT,  -- Pode ser NULL, pois pode haver campanhas sem doador associado diretamente
+    FOREIGN KEY (admin_id) REFERENCES admin(id) ON DELETE CASCADE,
+    FOREIGN KEY (doador_id) REFERENCES doadores(id) ON DELETE SET NULL
 );
+
 
 CREATE TABLE IF NOT EXISTS categorias (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,

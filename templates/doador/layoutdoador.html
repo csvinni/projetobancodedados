@@ -19,7 +19,7 @@
             </div>
 
             <div class="infor">
-                {% if current_user.is_authenticated %}
+                {% if current_user.is_admin %}
                     <a class="butao" href="{{ url_for('campanha.listar_campanhas_doador') }}">Campanhas</a>
                     <a class="butao" href="{{ url_for('doacao.itens_doacao') }}">Doar</a>
                     <a class="butao" href="{{ url_for('auth.logout') }}">Sair</a>

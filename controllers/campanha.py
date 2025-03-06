@@ -39,18 +39,16 @@ def listar_campanhas():
     data_final = request.args.get('data-final')
 
     cursor = mysql.connection.cursor()
-    
-    if current_user.is_admin():
-        # Administrador: retorna todas as campanhas
-        cursor.execute("SELECT * FROM campanhas")
+
+    if current_user.is_admin():  
+        cursor.execute("SELECT * FROM campanhas")  # Admin vê todas as campanhas
     else:
-        # Doador: retorna campanhas associadas ao doador
-        cursor.execute("SELECT * FROM campanhas WHERE admin_id = %s", (current_user.id,))
+        cursor.execute("SELECT * FROM campanhas")  # Doador vê todas, mas sem editar/excluir
 
     campanhas = cursor.fetchall()
 
     if data_inicial and data_final:
-        campanhas = [campanha for campanha in campanhas if campanha[4] >= data_inicial and campanha[5] <= data_final]  # Ajuste os índices conforme necessário
+        campanhas = [campanha for campanha in campanhas if campanha[4] >= data_inicial and campanha[5] <= data_final]
     elif data_inicial:
         campanhas = [campanha for campanha in campanhas if campanha[4] >= data_inicial]
     elif data_final:
@@ -58,11 +56,25 @@ def listar_campanhas():
 
     cursor.close()
 
-    # Renderiza o template baseado no tipo de usuário
     if current_user.is_admin():
         return render_template('campanha/listar_campanhas.html', campanhas=campanhas)
     else:
         return render_template('campanha/listar_campanhas_doador.html', campanhas=campanhas)
+
+
+@campanha_bp.route('/listar_campanhas_doador', methods=['GET'])
+@login_required
+def listar_campanhas_doador():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM campanhas")  # Exibe todas as campanhas para doadores
+    campanhas = cursor.fetchall()
+    cursor.close()
+
+    return render_template('campanha/listar_campanhas_doador.html', campanhas=campanhas)
+
+
+
+
 
 @campanha_bp.route('/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -112,4 +124,16 @@ def excluir(id):
     cursor.close()
 
     flash('Campanha e doações associadas excluídas com sucesso!', 'success')
+    return redirect(url_for('campanha.listar_campanhas'))
+
+@campanha_bp.route('/campanha/concluir/<int:id>', methods=['POST'])
+@login_required
+def concluir_campanha(id):
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("UPDATE campanhas SET status = %s WHERE id = %s", ("concluída", id))
+    mysql.connection.commit()
+    cursor.close()
+    
+    flash("Campanha concluída com sucesso!", "success")
     return redirect(url_for('campanha.listar_campanhas'))

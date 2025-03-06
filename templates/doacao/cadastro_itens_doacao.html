@@ -14,8 +14,30 @@
     </div>
 
     <div class="mb-3">
+        <label for="tipo_doacao" class="form-label">Tipo de Doação</label>
+        <select name="tipo_doacao" id="tipo_doacao" class="form-control" required onchange="toggleFields()">
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Item">Item</option>
+        </select>
+    </div>
+
+    <!-- Campos para doação em dinheiro -->
+    <div class="mb-3" id="valor_section">
         <label for="valor" class="form-label">Valor em Dinheiro</label>
-        <input type="number" name="valor" class="form-control" placeholder="Valor em R$" required>
+        <input type="number" step="0.01" name="valor" class="form-control" placeholder="Valor em R$">
+    </div>
+
+    <!-- Campos para doação de itens -->
+    <div id="item_section" style="display: none;">
+        <div class="mb-3">
+            <label for="tipo_item" class="form-label">Tipo de Item</label>
+            <input type="text" name="tipo_item" class="form-control" placeholder="Ex: Alimentos, Roupas">
+        </div>
+
+        <div class="mb-3">
+            <label for="quantidade" class="form-label">Quantidade</label>
+            <input type="number" name="quantidade" class="form-control" placeholder="Quantidade">
+        </div>
     </div>
 
     <div class="mb-3">
@@ -24,6 +46,23 @@
     </div>
 
     <button type="submit" class="btn btn-primary" style="background-color: red; border: none;">Doar</button>
+
 </form>
+
+<script>
+    function toggleFields() {
+        let tipoDoacao = document.getElementById("tipo_doacao").value;
+        let valorSection = document.getElementById("valor_section");
+        let itemSection = document.getElementById("item_section");
+
+        if (tipoDoacao === "Dinheiro") {
+            valorSection.style.display = "block";
+            itemSection.style.display = "none";
+        } else {
+            valorSection.style.display = "none";
+            itemSection.style.display = "block";
+        }
+    }
+</script>
 
 {% endblock %}

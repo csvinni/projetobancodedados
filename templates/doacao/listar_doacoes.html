@@ -2,7 +2,6 @@
 {% block title %}Doações Registradas{% endblock %}
 {% block content %}
 
-
 <div class="div-doacoes">
     <h2 class="h2-lista">Lista de Doações</h2>
 
@@ -11,7 +10,9 @@
             <tr>
                 <th>Doador</th>
                 <th>Campanha</th>
-                <th>Valor</th>
+                <th>Item Doado</th>
+                <th>Quantidade</th>
+                <th>Valor em Dinheiro</th>
                 <th>Data da Doação</th>
             </tr>
         </thead>
@@ -20,12 +21,39 @@
                 <tr>
                     <td>{{ doacao.doador_nome }}</td>
                     <td>{{ doacao.campanha_titulo }}</td>
-                    <td>{{ doacao.valor}}</td>
+
+                    <!-- Exibe o item doado se houver -->
+                    <td>
+                        {% if doacao.tipo_doacao == 'Item' %}
+                            {{ doacao.tipo_item }}
+                        {% else %}
+                            ---
+                        {% endif %}
+                    </td>
+
+                    <!-- Exibe a quantidade se for item -->
+                    <td>
+                        {% if doacao.tipo_doacao == 'Item' %}
+                            {{ doacao.quantidade }}
+                        {% else %}
+                            ---
+                        {% endif %}
+                    </td>
+
+                    <!-- Exibe o valor em dinheiro se houver -->
+                    <td>
+                        {% if doacao.valor %}
+                            R$ {{ "%.2f"|format(doacao.valor) }}
+                        {% else %}
+                            ---
+                        {% endif %}
+                    </td>
+
                     <td>{{ doacao.data_doacao }}</td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7" class="text-center">Nenhuma doação registrada.</td>
+                    <td colspan="6" class="text-center">Nenhuma doação registrada.</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -34,4 +62,3 @@
 </div>
 
 {% endblock %}
-

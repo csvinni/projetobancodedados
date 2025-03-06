@@ -6,8 +6,6 @@
 <body>
     <h2>Lista de Campanhas</h2>
     <div class="lista-c">
-       
-    
         <div class="campanhas-c">
              {% if campanhas %}
                 {% for campanha in campanhas %}
@@ -19,7 +17,9 @@
                             <h4 class="datas">Data Inicial: {{ campanha['data_inicio'] }}</h4>
                             <h4 class="datas">Data Limite: {{ campanha['data_fim'] }}</h4>
                             <h4>Status: {{ campanha['status'] }}</h4>
-
+                            
+                            <!-- Botão para doar -->
+                            <a href="{{ url_for('doacao.itens_doacao', campanha_id=campanha['id']) }}" class="btn btn-success" style="background-color: red; border: none;">Doar</a>
                         </div>
                     </div>
                 {% endfor %}

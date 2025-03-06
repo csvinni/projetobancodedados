@@ -1,6 +1,6 @@
 from flask_mysqldb import MySQL
 from flask_login import UserMixin
-mysql = MySQL()  # Apenas declare a variável aqui
+
 
 mysql = MySQL()
 
@@ -15,6 +15,10 @@ class Admin(UserMixin):
     def get_id(self):
         return self.id
 
+    def is_admin(self):
+        return True  # Sempre retorna True para admins
+
+
 class Doador(UserMixin):
     def __init__(self, id, nome, email, telefone, senha):
         self.id = id
@@ -25,6 +29,9 @@ class Doador(UserMixin):
 
     def get_id(self):
         return self.id
+
+    def is_admin(self):
+        return False  # Doador não é admin
 
 def obter_admin(email):
     cursor = mysql.connection.cursor()

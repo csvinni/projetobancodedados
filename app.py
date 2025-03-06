@@ -10,8 +10,8 @@ app.secret_key = 'dificil'
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_PORT'] = 3306
-app.config['MYSQL_USER'] = 'root'  # Alterado para 'root'
-app.config['MYSQL_PASSWORD'] = '1234'  # Alterado para a nova senha
+app.config['MYSQL_USER'] = 'root'  
+app.config['MYSQL_PASSWORD'] = ''  # Alterado para a nova senha
 app.config['MYSQL_DB'] = 'db_banco'  # Substitua pelo seu banco de dados
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 

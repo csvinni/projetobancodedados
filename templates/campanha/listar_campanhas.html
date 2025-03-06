@@ -59,7 +59,8 @@
                                     <form action="{{ url_for('campanha.editar', id=campanha['id']) }}" method="get" class="form-campanha">
                                         <button class="butao" type="submit">Editar</button>
                                     </form>
-                                    <form action="{{ url_for('campanha.concluida', id=campanha['id']) }}" method="post" class="form-campanha">
+                                    <form action="{{ url_for('campanha.concluir_campanha', id=campanha['id']) }}" method="post" class="form-campanha">
+
                                         <button class="butao" type="submit">Concluir</button>
                                     </form>
                                     <form action="{{ url_for('campanha.excluir', id=campanha['id']) }}" method="post" class="form-campanha">

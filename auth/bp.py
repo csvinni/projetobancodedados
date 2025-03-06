@@ -30,6 +30,7 @@ def load_user(user_id):
 @login_required
 def indexadmin():
     return render_template('auth/indexadmin.html')
+    
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
