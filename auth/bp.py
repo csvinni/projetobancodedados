@@ -1,22 +1,30 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
-from flask_mysqldb import MySQL
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
+from models.models import obter_admin, obter_doador, Admin, Doador  # Importando as classes
+from models.models import mysql
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 auth_bp = Blueprint('auth', __name__, template_folder='templates')
-mysql = MySQL()  # Inicialize o MySQL aqui
+
 login_manager = LoginManager()
 
 @login_manager.user_loader
 def load_user(user_id):
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM admin WHERE id = %s", (user_id,))
-    user = cursor.fetchone()
-    if user is None:
-        cursor.execute("SELECT * FROM doadores WHERE id = %s", (user_id,))
-        user = cursor.fetchone()
+    admin_data = cursor.fetchone()
+    if admin_data:
+        return Admin(admin_data['id'], admin_data['nome'], admin_data['email'], admin_data['senha'], admin_data['ong'])
+
+    cursor.execute("SELECT * FROM doadores WHERE id = %s", (user_id,))
+    doador_data = cursor.fetchone()
+    if doador_data:
+        return Doador(doador_data['id'], doador_data['nome'], doador_data['email'], doador_data['telefone'], doador_data['senha'])
+
     cursor.close()
-    return user
+    return None
 
 @auth_bp.route('/indexadmin')
 @login_required
@@ -30,23 +38,21 @@ def login():
         senha = request.form['senha']
         role = request.form.get('role')
 
-        cursor = mysql.connection.cursor()
-        
         if role == 'Admin':
-            cursor.execute("SELECT * FROM admin WHERE email = %s", (email,))
-            admin = cursor.fetchone()
-            if admin and check_password_hash(admin[3], senha):  # Assuming senha is at index 3
+            admin = obter_admin(email)
+            if admin and check_password_hash(admin.senha, senha):
                 login_user(admin)
+                flash('Login realizado com sucesso!', 'success')
                 return redirect(url_for('auth.indexadmin'))
 
         elif role == 'doador':
-            cursor.execute("SELECT * FROM doadores WHERE email = %s", (email,))
-            doador = cursor.fetchone()
-            if doador and check_password_hash(doador[3], senha):  # Assuming senha is at index 3
+            doador = obter_doador(email)
+            if doador and check_password_hash(doador.senha, senha):
                 login_user(doador)
+                flash('Login realizado com sucesso!', 'success')
                 return redirect(url_for('doador.indexdoador'))
 
-        cursor.close()
+        flash('Email ou senha incorretos', 'error')
 
     return render_template('auth/login.html')
 
@@ -60,7 +66,7 @@ def cadastro_admin():
 
         cursor = mysql.connection.cursor()
         cursor.execute("INSERT INTO admin (nome, email, ong, senha) VALUES (%s, %s, %s, %s)", 
-                       (nome, email, ong, generate_password_hash(senha)))
+               (nome, email, ong, generate_password_hash(senha)))
         mysql.connection.commit()
         cursor.close()
 
@@ -79,3 +85,6 @@ def logout():
 @login_required
 def dashboard():
     return render_template('auth/indexadmin.html', nome=current_user.ong)
+
+
+

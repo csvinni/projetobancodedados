@@ -4,16 +4,17 @@ USE `db_banco`;
 CREATE TABLE IF NOT EXISTS admin (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nome TEXT NOT NULL, 
-    email TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
     senha TEXT NOT NULL,
     ong TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS doadores (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    nome TEXT NOT NULL, 
-    email TEXT NOT NULL,
-    telefone TEXT NOT NULL
+    nome TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    telefone TEXT NOT NULL,
+    senha TEXT NOT NULL  -- Certifique-se de que a coluna 'senha' existe
 );
 
 CREATE TABLE IF NOT EXISTS campanhas (
