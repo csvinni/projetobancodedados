@@ -7,7 +7,6 @@ from database import mysql  # Certifique-se de ter inicializado o MySQL aqui
 
 doador_bp = Blueprint('doador', __name__, template_folder='templates')
 
-
 @doador_bp.route('/indexdoador')
 @login_required
 def indexdoador():
@@ -15,6 +14,13 @@ def indexdoador():
 
 @doador_bp.route('/cadastrodoador', methods=['GET', 'POST'])
 def cadastrodoador():
+    print(f"Usuário autenticado: {current_user.is_authenticated}")
+    print(f"Usuário: {current_user}")
+    print(f"Usuário é admin? {current_user.is_admin()}")
+
+    if not current_user.is_admin():  
+        return render_template('403.html')
+
     if request.method == 'POST':
         nome = request.form['nome']
         email = request.form['email']
@@ -27,8 +33,7 @@ def cadastrodoador():
             cursor.execute("INSERT INTO doadores (nome, email, telefone, senha) VALUES (%s, %s, %s, %s)",
                            (nome, email, telefone, hashed_senha))
             mysql.connection.commit()
-            flash('Cadastro realizado com sucesso!', 'success')
-            return redirect(url_for('auth.login'))  # Redireciona para a página de login
+            return redirect(url_for('doador.cadastrodoador'))  # Redireciona para a página de login
         except Exception as e:
             mysql.connection.rollback()
             flash(f'Erro ao cadastrar: {e}', 'error')
@@ -53,7 +58,6 @@ def itens_doacao():
             cursor.execute("INSERT INTO doacoes (id_doador, id_campanha, valor, data_doacao) VALUES (%s, %s, %s, %s)", 
                            (current_user.id, int(id_campanha), float(valor), data_doacao))
             mysql.connection.commit()
-            flash('Doação registrada com sucesso!')
         except Exception as e:
             mysql.connection.rollback()
             print(f"Erro ao registrar a doação: {e}")  # Para depuração
@@ -70,6 +74,12 @@ def itens_doacao():
 @doador_bp.route('/listar', methods=['GET'])
 @login_required
 def listar():
+    print(f"Usuário autenticado: {current_user.is_authenticated}")
+    print(f"Usuário: {current_user}")
+    print(f"Usuário é admin? {current_user.is_admin()}")
+
+    if not current_user.is_admin():  
+        return render_template('403.html')
     cursor = mysql.connection.cursor()
     try:
         cursor.execute("SELECT * FROM doadores WHERE admin_id = %s", (current_user.id,))

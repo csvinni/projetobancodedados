@@ -16,10 +16,12 @@ def load_user(user_id):
     cursor.execute("SELECT * FROM admin WHERE id = %s", (user_id,))
     admin_data = cursor.fetchone()
     if admin_data:
+        cursor.close()
         return Admin(admin_data['id'], admin_data['nome'], admin_data['email'], admin_data['senha'], admin_data['ong'])
 
     cursor.execute("SELECT * FROM doadores WHERE id = %s", (user_id,))
     doador_data = cursor.fetchone()
+    cursor.close()
     if doador_data:
         return Doador(doador_data['id'], doador_data['nome'], doador_data['email'], doador_data['telefone'], doador_data['senha'])
 
@@ -43,14 +45,12 @@ def login():
             admin = obter_admin(email)
             if admin and check_password_hash(admin.senha, senha):
                 login_user(admin)
-                flash('Login realizado com sucesso!', 'success')
                 return redirect(url_for('auth.indexadmin'))
 
         elif role == 'doador':
             doador = obter_doador(email)
             if doador and check_password_hash(doador.senha, senha):
                 login_user(doador)
-                flash('Login realizado com sucesso!', 'success')
                 return redirect(url_for('doador.indexdoador'))
 
         flash('Email ou senha incorretos', 'error')
@@ -59,6 +59,9 @@ def login():
 
 @auth_bp.route('/cadastro_admin', methods=['GET', 'POST'])
 def cadastro_admin():
+
+    if current_user.is_authenticated:  
+        return render_template('403.html')
     if request.method == 'POST':
         nome = request.form['nome']
         email = request.form['email']

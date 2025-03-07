@@ -10,6 +10,14 @@ campanha_bp = Blueprint('campanha', __name__, template_folder='templates')
 @campanha_bp.route('/campanhas', methods=['GET', 'POST'])
 @login_required
 def campanhas():
+
+    print(f"Usuário autenticado: {current_user.is_authenticated}")
+    print(f"Usuário: {current_user}")
+    print(f"Usuário é admin? {current_user.is_admin()}")
+
+    if not current_user.is_admin():  
+        return render_template('403.html')
+    
     if request.method == 'POST':
         titulo = request.form.get('titulo')
         descricao = request.form.get('descricao')
@@ -27,7 +35,6 @@ def campanhas():
         mysql.connection.commit()
         cursor.close()
         
-        flash('Campanha criada com sucesso!')
         return redirect(url_for('campanha.listar_campanhas'))
 
     return render_template('campanha/cadastro_campanhas.html')
@@ -79,13 +86,18 @@ def listar_campanhas_doador():
 @campanha_bp.route('/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editar(id):
+    print(f"Usuário autenticado: {current_user.is_authenticated}")
+    print(f"Usuário: {current_user}")
+    print(f"Usuário é admin? {current_user.is_admin()}")
+
+    if not current_user.is_admin():  
+        return render_template('403.html')
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM campanhas WHERE id = %s", (id,))
     campanha = cursor.fetchone()
     cursor.close()
 
     if not campanha:
-        flash('Campanha não encontrada.')
         return redirect(url_for('campanha.listar_campanhas'))
 
     if request.method == 'POST':
@@ -105,7 +117,6 @@ def editar(id):
         mysql.connection.commit()
         cursor.close()
         
-        flash('Campanha atualizada com sucesso!')
         return redirect(url_for('campanha.listar_campanhas'))
 
     return render_template('campanha/editar_campanha.html', campanha=campanha)
@@ -113,6 +124,12 @@ def editar(id):
 @campanha_bp.route('/excluir/<int:id>', methods=['POST'])
 @login_required
 def excluir(id):
+    print(f"Usuário autenticado: {current_user.is_authenticated}")
+    print(f"Usuário: {current_user}")
+    print(f"Usuário é admin? {current_user.is_admin()}")
+
+    if not current_user.is_admin():  
+        return render_template('403.html')
     cursor = mysql.connection.cursor()
     
     # Excluir doações associadas
@@ -123,17 +140,21 @@ def excluir(id):
     mysql.connection.commit()
     cursor.close()
 
-    flash('Campanha e doações associadas excluídas com sucesso!', 'success')
     return redirect(url_for('campanha.listar_campanhas'))
 
 @campanha_bp.route('/campanha/concluir/<int:id>', methods=['POST'])
 @login_required
 def concluir_campanha(id):
+    print(f"Usuário autenticado: {current_user.is_authenticated}")
+    print(f"Usuário: {current_user}")
+    print(f"Usuário é admin? {current_user.is_admin()}")
+
+    if not current_user.is_admin():  
+        return render_template('403.html')
     cursor = mysql.connection.cursor()
 
-    cursor.execute("UPDATE campanhas SET status = %s WHERE id = %s", ("concluída", id))
+    cursor.execute("UPDATE campanhas SET status = %s WHERE id = %s", ("Concluido", id))
     mysql.connection.commit()
     cursor.close()
     
-    flash("Campanha concluída com sucesso!", "success")
     return redirect(url_for('campanha.listar_campanhas'))

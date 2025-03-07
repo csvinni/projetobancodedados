@@ -30,12 +30,10 @@ def itens_doacao():
             """, (current_user.id, int(id_campanha), tipo_doacao, tipo_item, quantidade, valor, data_doacao))
             
             mysql.connection.commit()
-            flash('Doação registrada com sucesso!')
 
         except Exception as e:
             mysql.connection.rollback()
             print(f"Erro ao registrar a doação: {e}")  # Para depuração
-            flash('Erro ao registrar a doação. Tente novamente mais tarde.')
 
         finally:
             cursor.close()  
@@ -53,6 +51,14 @@ def itens_doacao():
 @doacao_bp.route('/listar_doacoes', methods=['GET'])
 @login_required
 def listar_doacoes():
+
+    print(f"Usuário autenticado: {current_user.is_authenticated}")
+    print(f"Usuário: {current_user}")
+    print(f"Usuário é admin? {current_user.is_admin()}")
+
+    if not current_user.is_admin():  
+        return render_template('403.html')
+    
     cursor = mysql.connection.cursor()
     
     cursor.execute("""

@@ -11,6 +11,7 @@ class Admin(UserMixin):
         self.email = email
         self.senha = senha
         self.ong = ong
+        
 
     def get_id(self):
         return self.id
