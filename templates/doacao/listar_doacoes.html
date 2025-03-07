@@ -2,63 +2,82 @@
 {% block title %}Doações Registradas{% endblock %}
 {% block content %}
 
-<div class="div-doacoes">
-    <h2 class="h2-lista">Lista de Doações</h2>
+<div class="container mt-4">
+    <h2 class="h2-lista text-center">Lista de Doações</h2>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Doador</th>
-                <th>Campanha</th>
-                <th>Item Doado</th>
-                <th>Quantidade</th>
-                <th>Valor em Dinheiro</th>
-                <th>Data da Doação</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for doacao in doacoes %}
-                <tr>
-                    <td>{{ doacao.doador_nome }}</td>
-                    <td>{{ doacao.campanha_titulo }}</td>
+    <div class="d-flex justify-content-between mb-3">
+        <!-- Formulário para filtrar total doado -->
+        <div class="card mb-4" style="width: 300px;">
+            <div class="card-header text-center">
+                <h5 class="card-title">Filtrar Total Doado</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('doacao.total_doado') }}" class="form-inline">
+                    <div class="form-group mb-1">
+                        <select name="id_doador" class="form-control form-control-sm" required>
+                            <option value="">Selecione um Doador</option>
+                            {% for doador in doadores %}
+                                <option value="{{ doador.id }}">{{ doador.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group mb-1">
+                        <input type="date" name="data_inicio" class="form-control form-control-sm" required>
+                    </div>
+                    <div class="form-group mb-1">
+                        <input type="date" name="data_fim" class="form-control form-control-sm" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm" style="background-color: red; border:none;">Calcular</button>
+                </form>
+            </div>
+        </div>
 
-                    <!-- Exibe o item doado se houver -->
-                    <td>
-                        {% if doacao.tipo_doacao == 'Item' %}
-                            {{ doacao.tipo_item }}
+        <!-- Tabela de Doações Registradas -->
+        <div class="card flex-fill">
+            <div class="card-header">
+                <h3 class="card-title">Doações Registradas</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Doador</th>
+                            <th>Campanha</th>
+                            <th>Item Doado</th>
+                            <th>Quantidade</th>
+                            <th>Valor em Dinheiro</th>
+                            <th>Data da Doação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if doacoes %}
+                            {% for doacao in doacoes %}
+                                <tr>
+                                    <td>{{ doacao.doador_nome }}</td>
+                                    <td>{{ doacao.campanha_titulo }}</td>
+                                    <td>{{ doacao.tipo_item if doacao.tipo_doacao == 'Item' else '---' }}</td>
+                                    <td>{{ doacao.quantidade if doacao.tipo_doacao == 'Item' else '---' }}</td>
+                                    <td>{{ 'R$ {:.2f}'.format(doacao.valor) if doacao.valor else '---' }}</td>
+                                    <td>{{ doacao.data_doacao }}</td>
+                                </tr>
+                            {% endfor %}
                         {% else %}
-                            ---
+                            <tr>
+                                <td colspan="6" class="text-center">Nenhuma doação registrada.</td>
+                            </tr>
                         {% endif %}
-                    </td>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-                    <!-- Exibe a quantidade se for item -->
-                    <td>
-                        {% if doacao.tipo_doacao == 'Item' %}
-                            {{ doacao.quantidade }}
-                        {% else %}
-                            ---
-                        {% endif %}
-                    </td>
-
-                    <!-- Exibe o valor em dinheiro se houver -->
-                    <td>
-                        {% if doacao.valor %}
-                            R$ {{ "%.2f"|format(doacao.valor) }}
-                        {% else %}
-                            ---
-                        {% endif %}
-                    </td>
-
-                    <td>{{ doacao.data_doacao }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="6" class="text-center">Nenhuma doação registrada.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
+    <!-- Seção para exibir o total doado -->
+    {% if total is not none %}
+        <div class="alert alert-info text-center">
+            <strong>Total Doado: </strong><span class="text-success">R$ {{ total }}</span>
+        </div>
+    {% endif %}
 </div>
 
 {% endblock %}

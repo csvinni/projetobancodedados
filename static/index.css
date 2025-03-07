@@ -116,6 +116,16 @@ header a{
 
 .mb-3{
     width: 95%;
+    
+
+}
+
+.mb-4{
+
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 4000px;
 }
 .form-mb{
     display: flex;

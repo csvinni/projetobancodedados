@@ -22,6 +22,7 @@ def campanhas():
         titulo = request.form.get('titulo')
         descricao = request.form.get('descricao')
         meta_financeira = request.form.get('meta_financeira')
+        meta_itens = request.form.get('meta_itens')
         data_inicio = request.form.get('data_inicio')
         data_fim = request.form.get('data_fim')
         status = request.form.get('status')
@@ -30,8 +31,8 @@ def campanhas():
         data_fim = datetime.strptime(data_fim, '%Y-%m-%d').date()
 
         cursor = mysql.connection.cursor()
-        cursor.execute("INSERT INTO campanhas (titulo, descricao, meta_financeira, data_inicio, data_fim, status, admin_id) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
-                       (titulo, descricao, meta_financeira, data_inicio, data_fim, status, current_user.id))
+        cursor.execute("INSERT INTO campanhas (titulo, descricao, meta_financeira,meta_itens, data_inicio, data_fim, status, admin_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                       (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim, status, current_user.id))
         mysql.connection.commit()
         cursor.close()
         
@@ -103,7 +104,8 @@ def editar(id):
     if request.method == 'POST':
         titulo = request.form.get('titulo')
         descricao = request.form.get('descricao')
-        meta_financeira = request.form.get('meta_financeira')
+        meta_financeira = request.form.get('meta_financeira') 
+        meta_itens = request.form.get('meta_itens')
         data_inicio = request.form.get('data_inicio')
         data_fim = request.form.get('data_fim')
         status = request.form.get('status')
@@ -112,8 +114,8 @@ def editar(id):
         data_fim = datetime.strptime(data_fim, '%Y-%m-%d').date()
 
         cursor = mysql.connection.cursor()
-        cursor.execute("UPDATE campanhas SET titulo = %s, descricao = %s, meta_financeira = %s, data_inicio = %s, data_fim = %s, status = %s WHERE id = %s", 
-                       (titulo, descricao, meta_financeira, data_inicio, data_fim, status, id))
+        cursor.execute("UPDATE campanhas SET titulo = %s, descricao = %s, meta_financeira = %s, meta_itens = %s, data_inicio = %s, data_fim = %s, status = %s WHERE id = %s", 
+                       (titulo, descricao, meta_financeira, meta_itens, data_inicio, data_fim, status, id))
         mysql.connection.commit()
         cursor.close()
         

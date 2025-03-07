@@ -60,3 +60,15 @@ CREATE TABLE IF NOT EXISTS relatorios (
     meta_comparativo TEXT NOT NULL,
     FOREIGN KEY (id_campanha) REFERENCES campanhas(id)
 );
+
+CREATE TABLE IF NOT EXISTS logs_doacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_doador INT NOT NULL,
+    id_campanha INT NOT NULL,
+    total_arrecadado DECIMAL(10, 2),
+    meta_financeira DECIMAL(10, 2),
+    status_atual VARCHAR(50),
+    momento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_doador) REFERENCES doadores(id),
+    FOREIGN KEY (id_campanha) REFERENCES campanhas(id)
+);

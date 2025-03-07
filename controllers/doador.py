@@ -90,3 +90,6 @@ def listar():
         return redirect(url_for('doador.indexdoador'))
     finally:
         cursor.close()
+
+
+
